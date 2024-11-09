@@ -1,126 +1,225 @@
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { ArrowRight, Sparkles, Shield, Heart } from 'lucide-react';
+'use client';
 
-export default function Home() {
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef } from 'react';
+import Image from 'next/image';
+
+export default function HomePage() {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"]
+  });
+
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.8]);
+  const y = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div ref={containerRef}>
       {/* Hero Section */}
-      <section className="relative py-20 md:py-32 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800">
-        <div className="container px-4 mx-auto">
-          <div className="flex flex-col lg:flex-row items-center">
-            <div className="lg:w-1/2 mb-10 lg:mb-0">
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                Transform Your Skin with Advanced Science
-              </h1>
-              <p className="text-lg md:text-xl text-muted-foreground mb-8">
-                Experience the perfect harmony of nature and innovation with Dermalix's revolutionary skincare solutions.
-              </p>
-              <div className="flex gap-4">
-                <Link href="/products">
-                  <Button size="lg" className="gap-2">
-                    Shop Now <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-                <Link href="/about">
-                  <Button variant="outline" size="lg">
-                    Learn More
-                  </Button>
-                </Link>
-              </div>
-            </div>
-            <div className="lg:w-1/2">
-              <img
-                src="https://images.unsplash.com/photo-1570554886111-e80fcca6a029?auto=format&fit=crop&q=80&w=800"
-                alt="Dermalix Skincare Products"
-                className="rounded-lg shadow-2xl"
-              />
-            </div>
-          </div>
+      <motion.section 
+        className="min-h-screen relative overflow-hidden bg-gradient-to-b from-background via-background/95 to-primary/5"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+      >
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          {[...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 bg-primary/20 rounded-full"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                y: [0, -20, 0],
+                opacity: [0.5, 1, 0.5],
+                scale: [1, 1.2, 1],
+              }}
+              transition={{
+                duration: 3 + Math.random() * 2,
+                repeat: Infinity,
+                delay: Math.random() * 2,
+              }}
+            />
+          ))}
         </div>
-      </section>
 
-      {/* Features Section */}
-      <section className="py-20">
-        <div className="container px-4 mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">Why Choose Dermalix</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="flex flex-col items-center text-center p-6 rounded-lg bg-card">
-              <Sparkles className="h-12 w-12 mb-4 text-primary" />
-              <h3 className="text-xl font-semibold mb-2">Innovation First</h3>
-              <p className="text-muted-foreground">
-                Cutting-edge formulations backed by scientific research
-              </p>
-            </div>
-            <div className="flex flex-col items-center text-center p-6 rounded-lg bg-card">
-              <Shield className="h-12 w-12 mb-4 text-primary" />
-              <h3 className="text-xl font-semibold mb-2">Clean Beauty</h3>
-              <p className="text-muted-foreground">
-                Safe, effective ingredients that respect your skin
-              </p>
-            </div>
-            <div className="flex flex-col items-center text-center p-6 rounded-lg bg-card">
-              <Heart className="h-12 w-12 mb-4 text-primary" />
-              <h3 className="text-xl font-semibold mb-2">Results Driven</h3>
-              <p className="text-muted-foreground">
-                Visible results backed by customer satisfaction
-              </p>
-            </div>
-          </div>
+        {/* Hero Content */}
+        <div className="container mx-auto px-4 pt-32 pb-20 relative z-10">
+          <motion.div
+            className="max-w-4xl mx-auto text-center"
+            style={{ opacity, scale, y }}
+          >
+            <motion.h1 
+              className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-primary"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              Transform Your Skin
+              <br />
+              <span className="text-foreground">With Science</span>
+            </motion.h1>
+
+            <motion.p
+              className="text-xl md:text-2xl text-foreground/80 mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
+              Experience the future of skincare with our advanced dermatological solutions
+            </motion.p>
+
+            <motion.div
+              className="flex flex-col sm:flex-row gap-4 justify-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+            >
+              <motion.button
+                className="px-8 py-4 rounded-full bg-gradient-to-r from-primary to-purple-600 text-white font-semibold text-lg 
+                          hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 transform hover:scale-105"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Explore Products
+              </motion.button>
+              <motion.button
+                className="px-8 py-4 rounded-full border-2 border-primary text-primary font-semibold text-lg 
+                          hover:bg-primary/10 transition-all duration-300"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Learn More
+              </motion.button>
+            </motion.div>
+          </motion.div>
         </div>
-      </section>
 
-      {/* Featured Products */}
-      <section className="py-20 bg-muted/50">
-        <div className="container px-4 mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">Featured Products</h2>
-          <div className="grid md:grid-cols-3 gap-8">
+        {/* Floating Product Cards */}
+        <div className="container mx-auto px-4 pb-32">
+          <motion.div 
+            className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto"
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+          >
             {[
               {
-                name: "Rejuvenating Serum",
-                price: "$89.99",
-                image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=400"
+                title: "Anti-Aging Serum",
+                description: "Advanced formula with retinol and peptides",
+                gradient: "from-blue-500 to-purple-500"
               },
               {
-                name: "Anti-Aging Cream",
-                price: "$129.99",
-                image: "https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?auto=format&fit=crop&q=80&w=400"
+                title: "Hydrating Cream",
+                description: "24-hour moisture with hyaluronic acid",
+                gradient: "from-purple-500 to-pink-500"
               },
               {
-                name: "Hydrating Moisturizer",
-                price: "$59.99",
-                image: "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&q=80&w=400"
+                title: "Vitamin C Complex",
+                description: "Brightening and antioxidant protection",
+                gradient: "from-pink-500 to-red-500"
               }
             ].map((product, index) => (
-              <div key={index} className="bg-card rounded-lg overflow-hidden shadow-lg">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-64 object-cover"
+              <motion.div
+                key={index}
+                className="group relative overflow-hidden rounded-2xl bg-background/50 backdrop-blur-sm border border-primary/20 p-6
+                          hover:shadow-lg hover:shadow-primary/20 transition-all duration-500"
+                whileHover={{ y: -10 }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-10 transition-opacity duration-500"
+                     style={{
+                       backgroundImage: `linear-gradient(to bottom right, var(--${product.gradient}))`
+                     }} />
+                <h3 className="text-xl font-semibold mb-2">{product.title}</h3>
+                <p className="text-foreground/70">{product.description}</p>
+                <motion.div
+                  className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{
+                    backgroundImage: `linear-gradient(to right, var(--${product.gradient}))`
+                  }}
                 />
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
-                  <p className="text-lg font-medium text-primary mb-4">{product.price}</p>
-                  <Button className="w-full">Add to Cart</Button>
-                </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-primary text-primary-foreground">
-        <div className="container px-4 mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6">Ready to Transform Your Skincare Routine?</h2>
-          <p className="text-lg mb-8 opacity-90">
-            Join thousands of satisfied customers who have discovered the Dermalix difference.
-          </p>
-          <Link href="/products">
-            <Button variant="secondary" size="lg">
-              Explore All Products
-            </Button>
-          </Link>
+      {/* Features Section */}
+      <section className="py-20 bg-gradient-to-b from-primary/5 to-background">
+        <div className="container mx-auto px-4">
+          <motion.div
+            className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <div>
+              <motion.h2 
+                className="text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600"
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true }}
+              >
+                Science-Backed Innovation
+              </motion.h2>
+              <motion.p
+                className="text-lg text-foreground/80 mb-8"
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                viewport={{ once: true }}
+              >
+                Our products are developed using cutting-edge dermatological research and advanced biotechnology, 
+                ensuring optimal results for your skin health and beauty.
+              </motion.p>
+              <motion.ul
+                className="space-y-4"
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                viewport={{ once: true }}
+              >
+                {[
+                  "Clinically proven ingredients",
+                  "Advanced delivery systems",
+                  "Sustainable formulations",
+                  "Personalized solutions"
+                ].map((feature, index) => (
+                  <motion.li
+                    key={index}
+                    className="flex items-center space-x-3"
+                    whileHover={{ x: 10 }}
+                  >
+                    <span className="w-2 h-2 bg-primary rounded-full" />
+                    <span>{feature}</span>
+                  </motion.li>
+                ))}
+              </motion.ul>
+            </div>
+            <motion.div
+              className="relative"
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <div className="aspect-square rounded-full bg-gradient-to-br from-primary/20 to-purple-600/20 animate-pulse" />
+              <motion.div
+                className="absolute inset-0 flex items-center justify-center"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              >
+                <div className="w-full h-full border-2 border-primary/20 rounded-full" />
+              </motion.div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
     </div>

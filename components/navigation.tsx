@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Menu, X, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const routes = [
   { href: '/', label: 'Home' },
@@ -24,147 +25,289 @@ const routes = [
   { href: '/contact', label: 'Contact' },
 ];
 
+const navVariants = {
+  hidden: { opacity: 0, y: -20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.5,
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: { 
+    opacity: 1, 
+    x: 0,
+    transition: { duration: 0.3 }
+  }
+};
+
+const dropdownVariants = {
+  hidden: { 
+    opacity: 0, 
+    y: -10,
+    clipPath: 'inset(0% 50% 100% 50% round 10px)'
+  },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    clipPath: 'inset(0% 0% 0% 0% round 10px)',
+    transition: {
+      type: "spring",
+      duration: 0.4,
+      staggerChildren: 0.05
+    }
+  }
+};
+
 export function Navigation() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <motion.header 
+      initial="hidden"
+      animate="visible"
+      variants={navVariants}
+      className="sticky top-0 z-50 w-full backdrop-blur-lg bg-background/60 border-b border-primary/10"
+    >
       <div className="container flex h-16 items-center">
-        <div className="mr-4 hidden md:flex">
-          <Link href="/" className="mr-6 flex items-center space-x-2">
-            <span className="text-xl font-bold">Dermalix</span>
+        <div className="mr-4 hidden md:flex w-full justify-between items-center">
+          <Link href="/" className="relative group">
+            <motion.span 
+              className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              Dermalix
+            </motion.span>
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-purple-600 group-hover:w-full transition-all duration-300" />
           </Link>
-          <nav className="flex items-center space-x-6 text-sm font-medium">
+          <nav className="flex items-center space-x-8 text-sm font-medium">
             {routes.map((route) => 
               route.children ? (
-                <div key={route.label} className="relative group">
+                <motion.div key={route.label} className="relative group" variants={itemVariants}>
                   <button
                     className={cn(
-                      'flex items-center space-x-1 transition-colors hover:text-foreground/80',
-                      pathname?.startsWith('/about') ? 'text-foreground' : 'text-foreground/60'
+                      'flex items-center space-x-1 transition-all duration-300 hover:text-primary',
+                      pathname?.startsWith('/about') ? 'text-primary' : 'text-foreground/80'
                     )}
                     onClick={() => setIsAboutOpen(!isAboutOpen)}
+                    onMouseEnter={() => setIsAboutOpen(true)}
+                    onMouseLeave={() => setIsAboutOpen(false)}
                   >
                     <span>{route.label}</span>
-                    <ChevronDown className="h-4 w-4" />
+                    <motion.div
+                      animate={{ rotate: isAboutOpen ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <ChevronDown className="h-4 w-4" />
+                    </motion.div>
                   </button>
-                  <div className={cn(
-                    'absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-background border',
-                    isAboutOpen ? 'block' : 'hidden'
-                  )}>
-                    <div className="py-1">
-                      {route.children.map((child) => (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          className={cn(
-                            'block px-4 py-2 text-sm',
-                            pathname === child.href
-                              ? 'bg-primary/5 text-foreground'
-                              : 'text-foreground/60 hover:bg-primary/5'
-                          )}
-                          onClick={() => setIsAboutOpen(false)}
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                  <AnimatePresence>
+                    {isAboutOpen && (
+                      <motion.div
+                        initial="hidden"
+                        animate="visible"
+                        exit="hidden"
+                        variants={dropdownVariants}
+                        className="absolute left-0 mt-2 w-48 rounded-xl backdrop-blur-xl bg-background/80 border border-primary/20 shadow-lg shadow-primary/20"
+                        onMouseEnter={() => setIsAboutOpen(true)}
+                        onMouseLeave={() => setIsAboutOpen(false)}
+                      >
+                        <div className="py-2">
+                          {route.children.map((child) => (
+                            <motion.div
+                              key={child.href}
+                              variants={itemVariants}
+                              whileHover={{ x: 5 }}
+                            >
+                              <Link
+                                href={child.href}
+                                className={cn(
+                                  'block px-4 py-2 text-sm transition-colors duration-200',
+                                  pathname === child.href
+                                    ? 'bg-primary/10 text-primary'
+                                    : 'hover:bg-primary/5 hover:text-primary'
+                                )}
+                                onClick={() => setIsAboutOpen(false)}
+                              >
+                                {child.label}
+                              </Link>
+                            </motion.div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
               ) : (
-                <Link
-                  key={route.href}
-                  href={route.href}
-                  className={cn(
-                    'transition-colors hover:text-foreground/80',
-                    pathname === route.href ? 'text-foreground' : 'text-foreground/60'
-                  )}
-                >
-                  {route.label}
-                </Link>
+                <motion.div key={route.href} variants={itemVariants}>
+                  <Link
+                    href={route.href}
+                    className={cn(
+                      'relative group-item transition-colors duration-300',
+                      pathname === route.href ? 'text-primary' : 'text-foreground/80 hover:text-primary'
+                    )}
+                  >
+                    <span className="relative z-10">{route.label}</span>
+                    <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-primary/50 to-purple-600/50 transform scale-x-0 group-item-hover:scale-x-100 transition-transform duration-300" />
+                  </Link>
+                </motion.div>
               )
             )}
           </nav>
+          <motion.div 
+            className="flex items-center"
+            whileHover={{ scale: 1.05 }}
+          >
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="relative overflow-hidden group"
+            >
+              <motion.div
+                whileHover={{ scale: 1.2 }}
+                className="relative z-10"
+              >
+                <ShoppingCart className="h-5 w-5" />
+              </motion.div>
+              <span className="absolute inset-0 bg-gradient-to-r from-primary/20 to-purple-600/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+            </Button>
+          </motion.div>
         </div>
-        <button
+
+        {/* Mobile Menu Button */}
+        <motion.button
           className="inline-flex items-center justify-center rounded-md p-2.5 text-gray-700 md:hidden"
           onClick={() => setIsOpen(!isOpen)}
+          whileTap={{ scale: 0.95 }}
         >
-          {isOpen ? (
-            <X className="h-6 w-6" aria-hidden="true" />
-          ) : (
-            <Menu className="h-6 w-6" aria-hidden="true" />
-          )}
-        </button>
-        <div className="flex flex-1 items-center justify-end space-x-4">
-          <Button variant="ghost" size="icon">
-            <ShoppingCart className="h-5 w-5" />
-          </Button>
-        </div>
-      </div>
-      {/* Mobile menu */}
-      {isOpen && (
-        <div className="md:hidden">
-          <div className="space-y-1 px-2 pb-3 pt-2">
-            {routes.map((route) => 
-              route.children ? (
-                <div key={route.label}>
-                  <button
-                    className={cn(
-                      'flex w-full items-center justify-between rounded-md px-3 py-2 text-base font-medium',
-                      pathname?.startsWith('/about')
-                        ? 'bg-gray-900 text-white'
-                        : 'text-gray-700 hover:bg-gray-50'
-                    )}
-                    onClick={() => setIsAboutOpen(!isAboutOpen)}
-                  >
-                    {route.label}
-                    <ChevronDown className="h-4 w-4" />
-                  </button>
-                  {isAboutOpen && (
-                    <div className="pl-4">
-                      {route.children.map((child) => (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          className={cn(
-                            'block rounded-md px-3 py-2 text-base font-medium',
-                            pathname === child.href
-                              ? 'bg-gray-900 text-white'
-                              : 'text-gray-700 hover:bg-gray-50'
-                          )}
-                          onClick={() => {
-                            setIsOpen(false);
-                            setIsAboutOpen(false);
-                          }}
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <Link
-                  key={route.href}
-                  href={route.href}
-                  className={cn(
-                    'block rounded-md px-3 py-2 text-base font-medium',
-                    pathname === route.href
-                      ? 'bg-gray-900 text-white'
-                      : 'text-gray-700 hover:bg-gray-50'
-                  )}
-                  onClick={() => setIsOpen(false)}
-                >
-                  {route.label}
-                </Link>
-              )
+          <AnimatePresence mode="wait">
+            {isOpen ? (
+              <motion.div
+                key="close"
+                initial={{ rotate: -90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 90, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <X className="h-6 w-6" />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="menu"
+                initial={{ rotate: 90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: -90, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Menu className="h-6 w-6" />
+              </motion.div>
             )}
-          </div>
-        </div>
-      )}
-    </header>
+          </AnimatePresence>
+        </motion.button>
+      </div>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden overflow-hidden backdrop-blur-lg bg-background/95"
+          >
+            <div className="space-y-1 px-2 pb-3 pt-2">
+              {routes.map((route) => 
+                route.children ? (
+                  <motion.div 
+                    key={route.label}
+                    variants={itemVariants}
+                  >
+                    <button
+                      className={cn(
+                        'flex w-full items-center justify-between rounded-md px-3 py-2 text-base font-medium transition-colors duration-200',
+                        pathname?.startsWith('/about')
+                          ? 'bg-primary/10 text-primary'
+                          : 'text-foreground/80 hover:bg-primary/5 hover:text-primary'
+                      )}
+                      onClick={() => setIsAboutOpen(!isAboutOpen)}
+                    >
+                      {route.label}
+                      <motion.div
+                        animate={{ rotate: isAboutOpen ? 180 : 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <ChevronDown className="h-4 w-4" />
+                      </motion.div>
+                    </button>
+                    <AnimatePresence>
+                      {isAboutOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className="pl-4"
+                        >
+                          {route.children.map((child) => (
+                            <motion.div
+                              key={child.href}
+                              variants={itemVariants}
+                              whileHover={{ x: 5 }}
+                            >
+                              <Link
+                                href={child.href}
+                                className={cn(
+                                  'block rounded-md px-3 py-2 text-base font-medium transition-colors duration-200',
+                                  pathname === child.href
+                                    ? 'bg-primary/10 text-primary'
+                                    : 'text-foreground/80 hover:bg-primary/5 hover:text-primary'
+                                )}
+                                onClick={() => {
+                                  setIsOpen(false);
+                                  setIsAboutOpen(false);
+                                }}
+                              >
+                                {child.label}
+                              </Link>
+                            </motion.div>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key={route.href}
+                    variants={itemVariants}
+                    whileHover={{ x: 5 }}
+                  >
+                    <Link
+                      href={route.href}
+                      className={cn(
+                        'block rounded-md px-3 py-2 text-base font-medium transition-colors duration-200',
+                        pathname === route.href
+                          ? 'bg-primary/10 text-primary'
+                          : 'text-foreground/80 hover:bg-primary/5 hover:text-primary'
+                      )}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {route.label}
+                    </Link>
+                  </motion.div>
+                )
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.header>
   );
 }
