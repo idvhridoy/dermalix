@@ -4,19 +4,30 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Menu, X } from 'lucide-react';
+import { ShoppingCart, Menu, X, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 
 const routes = [
   { href: '/', label: 'Home' },
-  { href: '/about', label: 'About' },
+  {
+    label: 'About',
+    children: [
+      { href: '/about', label: 'Overview' },
+      { href: '/mission', label: 'Mission' },
+      { href: '/vision', label: 'Vision' },
+      { href: '/goals', label: 'Goals' },
+      { href: '/achievements', label: 'Achievements' },
+    ]
+  },
   { href: '/products', label: 'Products' },
+  { href: '/reviews', label: 'Reviews' },
   { href: '/contact', label: 'Contact' },
 ];
 
 export function Navigation() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -26,18 +37,55 @@ export function Navigation() {
             <span className="text-xl font-bold">Dermalix</span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
-            {routes.map((route) => (
-              <Link
-                key={route.href}
-                href={route.href}
-                className={cn(
-                  'transition-colors hover:text-foreground/80',
-                  pathname === route.href ? 'text-foreground' : 'text-foreground/60'
-                )}
-              >
-                {route.label}
-              </Link>
-            ))}
+            {routes.map((route) => 
+              route.children ? (
+                <div key={route.label} className="relative group">
+                  <button
+                    className={cn(
+                      'flex items-center space-x-1 transition-colors hover:text-foreground/80',
+                      pathname?.startsWith('/about') ? 'text-foreground' : 'text-foreground/60'
+                    )}
+                    onClick={() => setIsAboutOpen(!isAboutOpen)}
+                  >
+                    <span>{route.label}</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                  <div className={cn(
+                    'absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-background border',
+                    isAboutOpen ? 'block' : 'hidden'
+                  )}>
+                    <div className="py-1">
+                      {route.children.map((child) => (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          className={cn(
+                            'block px-4 py-2 text-sm',
+                            pathname === child.href
+                              ? 'bg-primary/5 text-foreground'
+                              : 'text-foreground/60 hover:bg-primary/5'
+                          )}
+                          onClick={() => setIsAboutOpen(false)}
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  key={route.href}
+                  href={route.href}
+                  className={cn(
+                    'transition-colors hover:text-foreground/80',
+                    pathname === route.href ? 'text-foreground' : 'text-foreground/60'
+                  )}
+                >
+                  {route.label}
+                </Link>
+              )
+            )}
           </nav>
         </div>
         <button
@@ -60,21 +108,60 @@ export function Navigation() {
       {isOpen && (
         <div className="md:hidden">
           <div className="space-y-1 px-2 pb-3 pt-2">
-            {routes.map((route) => (
-              <Link
-                key={route.href}
-                href={route.href}
-                className={cn(
-                  'block rounded-md px-3 py-2 text-base font-medium',
-                  pathname === route.href
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-50'
-                )}
-                onClick={() => setIsOpen(false)}
-              >
-                {route.label}
-              </Link>
-            ))}
+            {routes.map((route) => 
+              route.children ? (
+                <div key={route.label}>
+                  <button
+                    className={cn(
+                      'flex w-full items-center justify-between rounded-md px-3 py-2 text-base font-medium',
+                      pathname?.startsWith('/about')
+                        ? 'bg-gray-900 text-white'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    )}
+                    onClick={() => setIsAboutOpen(!isAboutOpen)}
+                  >
+                    {route.label}
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                  {isAboutOpen && (
+                    <div className="pl-4">
+                      {route.children.map((child) => (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          className={cn(
+                            'block rounded-md px-3 py-2 text-base font-medium',
+                            pathname === child.href
+                              ? 'bg-gray-900 text-white'
+                              : 'text-gray-700 hover:bg-gray-50'
+                          )}
+                          onClick={() => {
+                            setIsOpen(false);
+                            setIsAboutOpen(false);
+                          }}
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  key={route.href}
+                  href={route.href}
+                  className={cn(
+                    'block rounded-md px-3 py-2 text-base font-medium',
+                    pathname === route.href
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-700 hover:bg-gray-50'
+                  )}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {route.label}
+                </Link>
+              )
+            )}
           </div>
         </div>
       )}
