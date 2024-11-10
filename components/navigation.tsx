@@ -2,218 +2,294 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { ShoppingCart, Menu, X, ChevronDown } from 'lucide-react';
-import { useState } from 'react';
+import { cn } from '../lib/utils';
+import { Button } from './ui/button';
+import { ShoppingCart, Menu, X, ChevronDown, Search, User } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 
-const routes = [
-  { href: '/', label: 'Home' },
-  {
-    label: 'About',
-    children: [
-      { href: '/about', label: 'Overview' },
-      { href: '/mission', label: 'Mission' },
-      { href: '/vision', label: 'Vision' },
-      { href: '/goals', label: 'Goals' },
-      { href: '/achievements', label: 'Achievements' },
+interface MenuItem {
+  label: string;
+  href: string;
+}
+
+interface CategorySection {
+  title: string;
+  items: MenuItem[];
+}
+
+interface FeaturedItem {
+  title: string;
+  image: string;
+  href: string;
+}
+
+interface MegaMenuContent {
+  categories: CategorySection[];
+  featured: FeaturedItem[];
+}
+
+interface MegaMenuData {
+  [key: string]: MegaMenuContent;
+}
+
+interface Route {
+  href?: string;
+  label: string;
+  megaMenu?: keyof MegaMenuData;
+}
+
+interface MegaMenuProps {
+  content: MegaMenuContent;
+  onClose: () => void;
+}
+
+const megaMenuContent: MegaMenuData = {
+  products: {
+    categories: [
+      {
+        title: 'Shop By Category',
+        items: [
+          { label: 'Cleansers', href: '/products/cleansers' },
+          { label: 'Serums', href: '/products/serums' },
+          { label: 'Moisturizers', href: '/products/moisturizers' },
+          { label: 'Sunscreens', href: '/products/sunscreens' },
+          { label: 'Treatments', href: '/products/treatments' },
+        ]
+      },
+      {
+        title: 'Shop By Concern',
+        items: [
+          { label: 'Acne & Breakouts', href: '/concerns/acne' },
+          { label: 'Anti-Aging', href: '/concerns/aging' },
+          { label: 'Brightening', href: '/concerns/brightening' },
+          { label: 'Hydration', href: '/concerns/hydration' },
+          { label: 'Sensitive Skin', href: '/concerns/sensitive' },
+        ]
+      }
+    ],
+    featured: [
+      {
+        title: 'Best Sellers',
+        image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be',
+        href: '/products/bestsellers'
+      },
+      {
+        title: 'New Arrivals',
+        image: 'https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19',
+        href: '/products/new'
+      }
     ]
   },
-  { href: '/products', label: 'Products' },
+  about: {
+    categories: [
+      {
+        title: 'Our Story',
+        items: [
+          { label: 'Overview', href: '/about' },
+          { label: 'Mission', href: '/mission' },
+          { label: 'Vision', href: '/vision' },
+          { label: 'Goals', href: '/goals' },
+          { label: 'Achievements', href: '/achievements' },
+        ]
+      },
+      {
+        title: 'Innovation',
+        items: [
+          { label: 'Research & Development', href: '/about/research' },
+          { label: 'Technology', href: '/about/technology' },
+          { label: 'Sustainability', href: '/about/sustainability' },
+          { label: 'Clinical Studies', href: '/about/studies' },
+        ]
+      }
+    ],
+    featured: [
+      {
+        title: 'Our Lab',
+        image: 'https://images.unsplash.com/photo-1614859324967-bdf413c35a5b',
+        href: '/about/lab'
+      }
+    ]
+  }
+};
+
+const routes: Route[] = [
+  { href: '/', label: 'Home' },
+  { label: 'Products', megaMenu: 'products' },
+  { label: 'About', megaMenu: 'about' },
   { href: '/reviews', label: 'Reviews' },
   { href: '/contact', label: 'Contact' },
 ];
 
-const navVariants = {
-  hidden: { opacity: 0, y: -20 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: {
-      duration: 0.5,
-      staggerChildren: 0.1
-    }
-  }
-};
+const MegaMenu: React.FC<MegaMenuProps> = ({ content, onClose }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      className="absolute left-0 right-0 mt-2 bg-background/95 backdrop-blur-xl border-y border-primary/20 shadow-lg shadow-primary/10"
+    >
+      <div className="container mx-auto py-8">
+        <div className="grid grid-cols-12 gap-8">
+          {/* Categories */}
+          <div className="col-span-8 grid grid-cols-2 gap-8">
+            {content.categories.map((category, idx) => (
+              <div key={idx}>
+                <h3 className="font-semibold text-lg mb-4 text-primary">{category.title}</h3>
+                <ul className="space-y-3">
+                  {category.items.map((item, itemIdx) => (
+                    <motion.li
+                      key={itemIdx}
+                      whileHover={{ x: 5 }}
+                      className="text-foreground/80 hover:text-primary transition-colors"
+                    >
+                      <Link href={item.href} onClick={onClose}>
+                        {item.label}
+                      </Link>
+                    </motion.li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
 
-const itemVariants = {
-  hidden: { opacity: 0, x: -20 },
-  visible: { 
-    opacity: 1, 
-    x: 0,
-    transition: { duration: 0.3 }
-  }
-};
-
-const dropdownVariants = {
-  hidden: { 
-    opacity: 0, 
-    y: -10,
-    clipPath: 'inset(0% 50% 100% 50% round 10px)'
-  },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    clipPath: 'inset(0% 0% 0% 0% round 10px)',
-    transition: {
-      type: "spring",
-      duration: 0.4,
-      staggerChildren: 0.05
-    }
-  }
+          {/* Featured Items */}
+          <div className="col-span-4">
+            <div className="grid gap-4">
+              {content.featured.map((item, idx) => (
+                <Link
+                  key={idx}
+                  href={item.href}
+                  onClick={onClose}
+                  className="group relative overflow-hidden rounded-lg"
+                >
+                  <div className="relative h-48">
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
+                    <div className="absolute bottom-4 left-4">
+                      <h4 className="text-lg font-semibold text-white">{item.title}</h4>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
 };
 
 export function Navigation() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [activeMegaMenu, setActiveMegaMenu] = useState<keyof MegaMenuData | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const toggleMegaMenu = (menuKey: keyof MegaMenuData | null) => {
+    setActiveMegaMenu(menuKey);
+  };
 
   return (
     <motion.header 
       initial="hidden"
       animate="visible"
-      variants={navVariants}
-      className="sticky top-0 z-50 w-full backdrop-blur-xl bg-background/60 border-b border-primary/20"
+      className={cn(
+        "sticky top-0 z-50 w-full transition-all duration-300",
+        isScrolled ? "backdrop-blur-xl bg-background/60 shadow-md shadow-primary/5" : "bg-transparent"
+      )}
     >
-      <div className="container mx-auto px-[10px]">
-        <div className="flex h-16 items-center justify-between">
+      <div className="container mx-auto px-4">
+        <div className="flex h-20 items-center justify-between">
+          {/* Logo */}
           <Link href="/" className="relative group">
             <motion.div 
-              className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary neon-text"
+              className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary neon-text"
               whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300 }}
             >
               Dermalix
             </motion.div>
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary via-secondary to-primary group-hover:w-full transition-all duration-300" />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {routes.map((route) => 
-              route.children ? (
-                <motion.div key={route.label} className="relative group" variants={itemVariants}>
-                  <button
-                    className={cn(
-                      'flex items-center space-x-1 transition-all duration-300 hover:text-primary group',
-                      pathname?.startsWith('/about') ? 'text-primary neon-text' : 'text-foreground/80'
-                    )}
-                    onMouseEnter={() => setIsAboutOpen(true)}
-                    onMouseLeave={() => setIsAboutOpen(false)}
-                  >
-                    <span>{route.label}</span>
-                    <motion.div
-                      animate={{ rotate: isAboutOpen ? 180 : 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <ChevronDown className="h-4 w-4" />
-                    </motion.div>
-                  </button>
-                  <AnimatePresence>
-                    {isAboutOpen && (
-                      <motion.div
-                        initial="hidden"
-                        animate="visible"
-                        exit="hidden"
-                        variants={dropdownVariants}
-                        className="absolute left-0 mt-2 w-48 rounded-xl backdrop-blur-xl bg-background/95 border border-primary/20 shadow-lg shadow-primary/20"
-                        onMouseEnter={() => setIsAboutOpen(true)}
-                        onMouseLeave={() => setIsAboutOpen(false)}
-                      >
-                        <div className="py-2">
-                          {route.children.map((child) => (
-                            <motion.div
-                              key={child.href}
-                              variants={itemVariants}
-                              whileHover={{ x: 5 }}
-                            >
-                              <Link
-                                href={child.href}
-                                className={cn(
-                                  'block px-4 py-2 text-sm transition-colors duration-200',
-                                  pathname === child.href
-                                    ? 'bg-primary/10 text-primary neon-text'
-                                    : 'hover:bg-primary/5 hover:text-primary'
-                                )}
-                                onClick={() => setIsAboutOpen(false)}
-                              >
-                                {child.label}
-                              </Link>
-                            </motion.div>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              ) : (
-                <motion.div key={route.href} variants={itemVariants}>
+          <nav className="hidden lg:flex items-center space-x-8">
+            {routes.map((route) => (
+              <div
+                key={route.label}
+                onMouseEnter={() => route.megaMenu && toggleMegaMenu(route.megaMenu)}
+                onMouseLeave={() => toggleMegaMenu(null)}
+                className="relative py-8"
+              >
+                {route.href ? (
                   <Link
                     href={route.href}
                     className={cn(
-                      'relative group-item transition-colors duration-300',
-                      pathname === route.href ? 'text-primary neon-text' : 'text-foreground/80 hover:text-primary'
+                      'text-sm font-medium transition-colors hover:text-primary',
+                      pathname === route.href ? 'text-primary' : 'text-foreground/80'
                     )}
                   >
-                    <span className="relative z-10">{route.label}</span>
-                    <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-primary/50 to-secondary/50 transform scale-x-0 group-item-hover:scale-x-100 transition-transform duration-300" />
+                    {route.label}
                   </Link>
-                </motion.div>
-              )
-            )}
+                ) : (
+                  <button
+                    className={cn(
+                      'text-sm font-medium transition-colors hover:text-primary flex items-center space-x-1',
+                      activeMegaMenu === route.megaMenu ? 'text-primary' : 'text-foreground/80'
+                    )}
+                  >
+                    <span>{route.label}</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                )}
+
+                {/* Mega Menu */}
+                <AnimatePresence>
+                  {route.megaMenu && activeMegaMenu === route.megaMenu && (
+                    <MegaMenu 
+                      content={megaMenuContent[route.megaMenu]}
+                      onClose={() => toggleMegaMenu(null)}
+                    />
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
           </nav>
 
-          {/* Cart Button */}
-          <motion.div 
-            className="flex items-center"
-            whileHover={{ scale: 1.05 }}
-          >
-            <Button 
-              variant="ghost" 
-              size="icon"
-              className="relative overflow-hidden group neon-border"
-            >
-              <motion.div
-                whileHover={{ scale: 1.2 }}
-                className="relative z-10"
-              >
-                <ShoppingCart className="h-5 w-5 text-primary" />
-              </motion.div>
-              <span className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+          {/* Right Side Actions */}
+          <div className="flex items-center space-x-4">
+            <Button variant="ghost" size="icon" className="hidden md:flex">
+              <Search className="h-5 w-5" />
             </Button>
-          </motion.div>
-
-          {/* Mobile Menu Button */}
-          <motion.button
-            className="inline-flex items-center justify-center rounded-md p-2.5 text-primary md:hidden neon-border"
-            onClick={() => setIsOpen(!isOpen)}
-            whileTap={{ scale: 0.95 }}
-          >
-            <AnimatePresence mode="wait">
-              {isOpen ? (
-                <motion.div
-                  key="close"
-                  initial={{ rotate: -90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: 90, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <X className="h-6 w-6" />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="menu"
-                  initial={{ rotate: 90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: -90, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Menu className="h-6 w-6" />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.button>
+            <Button variant="ghost" size="icon" className="hidden md:flex">
+              <User className="h-5 w-5" />
+            </Button>
+            <Button variant="ghost" size="icon">
+              <ShoppingCart className="h-5 w-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
@@ -223,89 +299,72 @@ export function Navigation() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="md:hidden overflow-hidden backdrop-blur-xl bg-background/95"
+              className="lg:hidden overflow-hidden border-t border-primary/10"
             >
-              <div className="space-y-1 px-2 pb-3 pt-2">
-                {routes.map((route) => 
-                  route.children ? (
-                    <motion.div 
-                      key={route.label}
-                      variants={itemVariants}
-                    >
-                      <button
-                        className={cn(
-                          'flex w-full items-center justify-between rounded-md px-3 py-2 text-base font-medium transition-colors duration-200',
-                          pathname?.startsWith('/about')
-                            ? 'bg-primary/10 text-primary neon-text'
-                            : 'text-foreground/80 hover:bg-primary/5 hover:text-primary'
-                        )}
-                        onClick={() => setIsAboutOpen(!isAboutOpen)}
-                      >
-                        {route.label}
-                        <motion.div
-                          animate={{ rotate: isAboutOpen ? 180 : 0 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <ChevronDown className="h-4 w-4" />
-                        </motion.div>
-                      </button>
-                      <AnimatePresence>
-                        {isAboutOpen && (
-                          <motion.div
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            className="pl-4"
-                          >
-                            {route.children.map((child) => (
-                              <motion.div
-                                key={child.href}
-                                variants={itemVariants}
-                                whileHover={{ x: 5 }}
-                              >
-                                <Link
-                                  href={child.href}
-                                  className={cn(
-                                    'block rounded-md px-3 py-2 text-base font-medium transition-colors duration-200',
-                                    pathname === child.href
-                                      ? 'bg-primary/10 text-primary neon-text'
-                                      : 'text-foreground/80 hover:bg-primary/5 hover:text-primary'
-                                  )}
-                                  onClick={() => {
-                                    setIsOpen(false);
-                                    setIsAboutOpen(false);
-                                  }}
-                                >
-                                  {child.label}
-                                </Link>
-                              </motion.div>
-                            ))}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key={route.href}
-                      variants={itemVariants}
-                      whileHover={{ x: 5 }}
-                    >
+              <div className="space-y-4 py-4">
+                {routes.map((route) => (
+                  <div key={route.label}>
+                    {route.href ? (
                       <Link
                         href={route.href}
                         className={cn(
-                          'block rounded-md px-3 py-2 text-base font-medium transition-colors duration-200',
-                          pathname === route.href
-                            ? 'bg-primary/10 text-primary neon-text'
-                            : 'text-foreground/80 hover:bg-primary/5 hover:text-primary'
+                          'block px-4 py-2 text-sm font-medium transition-colors',
+                          pathname === route.href ? 'text-primary' : 'text-foreground/80'
                         )}
                         onClick={() => setIsOpen(false)}
                       >
                         {route.label}
                       </Link>
-                    </motion.div>
-                  )
-                )}
+                    ) : (
+                      <div className="space-y-2">
+                        <button
+                          className="w-full flex items-center justify-between px-4 py-2 text-sm font-medium text-foreground/80"
+                          onClick={() => route.megaMenu && toggleMegaMenu(activeMegaMenu === route.megaMenu ? null : route.megaMenu)}
+                        >
+                          <span>{route.label}</span>
+                          <ChevronDown className={cn(
+                            "h-4 w-4 transition-transform",
+                            activeMegaMenu === route.megaMenu && "rotate-180"
+                          )} />
+                        </button>
+                        <AnimatePresence>
+                          {route.megaMenu && activeMegaMenu === route.megaMenu && (
+                            <motion.div
+                              initial={{ height: 0 }}
+                              animate={{ height: "auto" }}
+                              exit={{ height: 0 }}
+                              className="overflow-hidden bg-primary/5"
+                            >
+                              <div className="px-6 py-4 space-y-4">
+                                {megaMenuContent[route.megaMenu].categories.map((category, idx) => (
+                                  <div key={idx}>
+                                    <h3 className="font-medium text-primary mb-2">{category.title}</h3>
+                                    <ul className="space-y-2">
+                                      {category.items.map((item, itemIdx) => (
+                                        <li key={itemIdx}>
+                                          <Link
+                                            href={item.href}
+                                            className="text-sm text-foreground/80 hover:text-primary"
+                                            onClick={() => {
+                                              setIsOpen(false);
+                                              toggleMegaMenu(null);
+                                            }}
+                                          >
+                                            {item.label}
+                                          </Link>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                ))}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             </motion.div>
           )}
