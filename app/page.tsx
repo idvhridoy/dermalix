@@ -279,7 +279,7 @@ export default function HomePage() {
               className="relative h-[500px] rounded-2xl overflow-hidden"
             >
               <Image
-                src="https://images.unsplash.com/photo-1614859324967-bdf413c35a5b"
+                src="https://plus.unsplash.com/premium_photo-1683121718643-fb18d2668d53?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="AI Skin Analysis"
                 fill
                 className="object-cover"

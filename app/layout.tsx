@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { RootLayoutClient } from '../components/root-layout-client';
+import { BackToTop } from '@/components/back-to-top';
 
 export const metadata: Metadata = {
   title: 'Dermalix - Innovative Skincare Solutions',
@@ -14,7 +15,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <RootLayoutClient>{children}</RootLayoutClient>
+      <RootLayoutClient>
+        {children}
+        <BackToTop />
+      </RootLayoutClient>
     </html>
   );
 }
