@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '../lib/utils';
 import { Button } from './ui/button';
 import { ShoppingCart, Menu, X, ChevronDown, Search, User } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
@@ -192,13 +192,24 @@ export function Navigation() {
   const [activeMegaMenu, setActiveMegaMenu] = useState<keyof MegaMenuData | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
 
+  // Initialize scroll position on mount
+  useLayoutEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsScrolled(window.scrollY > 0);
+    }
+  }, []);
+
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 0);
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   const toggleMegaMenu = (menuKey: keyof MegaMenuData | null) => {

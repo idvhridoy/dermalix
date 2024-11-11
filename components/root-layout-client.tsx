@@ -7,11 +7,31 @@ import { ThemeProvider } from './theme-provider';
 import { VisitorStats } from './visitor-stats';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
+import { useState, useEffect, useLayoutEffect } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
 // Cyberpunk particle animation component
 function ParticleBackground() {
+  const [windowHeight, setWindowHeight] = useState(1000); // Default fallback height
+
+  useLayoutEffect(() => {
+    if (typeof window !== 'undefined') {
+      setWindowHeight(window.innerHeight);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleResize = () => {
+      setWindowHeight(window.innerHeight);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden">
       {[...Array(50)].map((_, i) => (
@@ -24,7 +44,7 @@ function ParticleBackground() {
             scale: Math.random() * 0.5 + 0.5,
           }}
           animate={{
-            y: [-10, -window.innerHeight],
+            y: [-10, -windowHeight],
             opacity: [0, 1, 0],
           }}
           transition={{

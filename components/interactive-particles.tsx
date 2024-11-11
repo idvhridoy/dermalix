@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import { motion, useSpring, useTransform } from 'framer-motion';
 
 interface Particle {
@@ -10,20 +10,36 @@ interface Particle {
   color: string;
 }
 
+interface Dimensions {
+  width: number;
+  height: number;
+}
+
 export function InteractiveParticles() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [particles, setParticles] = useState<Particle[]>([]);
+  const [dimensions, setDimensions] = useState<Dimensions>({ width: 1000, height: 1000 });
 
   // Create smooth mouse movement
   const smoothX = useSpring(0, { damping: 50, stiffness: 400 });
   const smoothY = useSpring(0, { damping: 50, stiffness: 400 });
 
+  // Get initial dimensions
+  useLayoutEffect(() => {
+    if (typeof window !== 'undefined') {
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    }
+  }, []);
+
   useEffect(() => {
     // Initialize particles
     const initialParticles: Particle[] = Array.from({ length: 50 }, () => ({
-      x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
-      y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 1000),
+      x: Math.random() * dimensions.width,
+      y: Math.random() * dimensions.height,
       size: Math.random() * 3 + 1,
       color: `hsla(${Math.random() * 360}, 70%, 70%, 0.3)`
     }));
@@ -41,23 +57,30 @@ export function InteractiveParticles() {
     };
 
     const handleResize = () => {
-      if (containerRef.current) {
+      if (typeof window !== 'undefined' && containerRef.current) {
+        const newDimensions = {
+          width: window.innerWidth,
+          height: window.innerHeight
+        };
+        setDimensions(newDimensions);
         setParticles(prev => prev.map(particle => ({
           ...particle,
-          x: Math.random() * window.innerWidth,
-          y: Math.random() * window.innerHeight
+          x: Math.random() * newDimensions.width,
+          y: Math.random() * newDimensions.height
         })));
       }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('resize', handleResize);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('resize', handleResize);
 
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [smoothX, smoothY]);
+      return () => {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('resize', handleResize);
+      };
+    }
+  }, [smoothX, smoothY, dimensions.width, dimensions.height]);
 
   // Update particle positions based on mouse movement
   useEffect(() => {

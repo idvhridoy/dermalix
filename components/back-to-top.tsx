@@ -1,19 +1,24 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronUp } from 'lucide-react';
 
 export function BackToTop() {
   const [isVisible, setIsVisible] = useState(false);
 
+  // Initialize visibility state on mount
+  useLayoutEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsVisible(window.scrollY > 300);
+    }
+  }, []);
+
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const toggleVisibility = () => {
-      if (window.scrollY > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
+      setIsVisible(window.scrollY > 300);
     };
 
     window.addEventListener('scroll', toggleVisibility);
@@ -24,6 +29,8 @@ export function BackToTop() {
   }, []);
 
   const scrollToTop = () => {
+    if (typeof window === 'undefined') return;
+    
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
