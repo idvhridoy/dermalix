@@ -39,10 +39,24 @@ export function VisitorStats() {
     >
       <button
         onClick={() => setIsVisible(!isVisible)}
-        className="flex items-center space-x-2 px-4 py-2 rounded-full bg-red-600/90 border border-primary/20 
-                   hover:border-primary/40 transition-all duration-300 neon-border"
+        className="flex items-center space-x-2 px-3 py-2 rounded-full bg-red-600/90 border border-primary/20 
+                   hover:border-primary/40 transition-all duration-300 neon-border hover:bg-red-500/90"
       >
-        <Activity className="w-4 h-4 text-white animate-pulse" />
+        <motion.div
+          animate={{ 
+            scale: [1, 1.2, 1],
+            rotate: [0, -10, 10, -10, 0]
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="relative"
+        >
+          <Activity className="w-5 h-5 text-white" />
+          <div className="absolute inset-0 animate-ping bg-white/30 rounded-full" />
+        </motion.div>
         <motion.span 
           animate={{ 
             opacity: [1, 0.7, 1],
@@ -53,7 +67,7 @@ export function VisitorStats() {
             repeat: Infinity,
             ease: "easeInOut"
           }}
-          className="text-sm text-white neon-text"
+          className="text-sm text-white neon-text hidden md:inline"
         >
           Live Visitors
         </motion.span>
