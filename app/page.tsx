@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import Image from 'next/image';
+import Link from 'next/link';
 import { InteractiveParticles } from '@/components/interactive-particles';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, Star, ArrowRight, Brain, Sparkles, Zap, Timer, Sun, Shield, Droplet, BadgeAlert } from 'lucide-react';
@@ -314,13 +315,17 @@ export default function HomePage() {
               Advanced skincare solutions backed by science
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="group">
-                Shop Now
-                <ChevronRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button size="lg" variant="outline">
-                Take Skin Quiz
-              </Button>
+              <Link href="/products">
+                <Button size="lg" className="group">
+                  Shop Now
+                  <ChevronRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              <Link href="/quiz">
+                <Button size="lg" variant="outline">
+                  Take Skin Quiz
+                </Button>
+              </Link>
             </div>
           </motion.div>
         </div>
@@ -395,9 +400,11 @@ export default function HomePage() {
                   />
                 </div>
                 <h3 className="text-lg font-medium mb-2 text-center">{concern.name}</h3>
-                <Button variant="ghost" className="w-full group-hover:text-primary">
-                  Learn More
-                </Button>
+                <Link href={concern.href}>
+                  <Button variant="ghost" className="w-full group-hover:text-primary">
+                    Learn More
+                  </Button>
+                </Link>
               </motion.div>
             ))}
           </div>
@@ -438,9 +445,11 @@ export default function HomePage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
                   <div className="absolute bottom-6 left-6">
                     <h3 className="text-2xl font-semibold text-white mb-2">{category.name}</h3>
-                    <Button variant="ghost" className="text-white group-hover:translate-x-2 transition-transform">
-                      Shop Now <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
+                    <Link href={category.href}>
+                      <Button variant="ghost" className="text-white group-hover:translate-x-2 transition-transform">
+                        Shop Now <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </motion.div>
@@ -516,10 +525,12 @@ export default function HomePage() {
                 Get personalized skincare recommendations based on advanced AI analysis of your skin's unique characteristics.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="group">
-                  <Brain className="mr-2 h-5 w-5" />
-                  Start Analysis
-                </Button>
+                <Link href="/analysis">
+                  <Button size="lg" className="group">
+                    <Brain className="mr-2 h-5 w-5" />
+                    Start Analysis
+                  </Button>
+                </Link>
                 <Button size="lg" variant="outline">
                   Learn More
                 </Button>
