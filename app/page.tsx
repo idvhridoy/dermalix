@@ -53,40 +53,67 @@ const concerns = [
 
 const reviews = [
   {
-    name: 'Sarah M.',
-    rating: 5,
-    comment: 'Amazing results! My skin has never looked better. The products are gentle yet effective.',
-    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80'
+    name: "Sarah Johnson",
+    role: "Skincare Enthusiast",
+    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
+    review: "The anti-aging serum has transformed my skin completely. Fine lines have visibly reduced, and my skin feels so much firmer!",
+    rating: 5
   },
   {
-    name: 'Michael R.',
-    rating: 5,
-    comment: 'The products are worth every penny. Seeing great improvements in my skin texture and tone!',
-    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e'
+    name: "Michael Chen",
+    role: "Professional Model",
+    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
+    review: "As a model, my skin needs to look perfect. Dermalix products have become an essential part of my daily routine. The results are amazing!",
+    rating: 5
   },
   {
-    name: 'Emma L.',
-    rating: 5,
-    comment: 'Finally found products that work for my sensitive skin. The customer service is excellent too!',
-    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb'
+    name: "Emma Thompson",
+    role: "Beauty Blogger",
+    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb",
+    review: "I've tried countless skincare products, but Dermalix stands out. Their natural ingredients and scientific approach really deliver results.",
+    rating: 5
   },
   {
-    name: 'David W.',
-    rating: 5,
-    comment: 'The anti-aging serum is a game changer. I can see visible results in just a few weeks.',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d'
+    name: "David Rodriguez",
+    role: "Dermatologist",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
+    review: "I recommend Dermalix to my patients. The formulations are backed by science, and the results speak for themselves.",
+    rating: 5
   },
   {
-    name: 'Jessica H.',
-    rating: 5,
-    comment: 'Love how my skin feels after using these products. The brightening serum is my favorite!',
-    image: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04'
+    name: "Sophia Kim",
+    role: "Makeup Artist",
+    image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04",
+    review: "My clients always ask about my skincare secrets. Dermalix products create the perfect canvas for makeup application.",
+    rating: 5
   },
   {
-    name: 'Robert K.',
-    rating: 5,
-    comment: 'Great natural ingredients and the results speak for themselves. Highly recommended!',
-    image: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce'
+    name: "James Wilson",
+    role: "Fitness Trainer",
+    image: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce",
+    review: "The post-workout recovery cream is incredible. It keeps my skin healthy and fresh even after intense training sessions.",
+    rating: 5
+  },
+  {
+    name: "Olivia Martinez",
+    role: "Yoga Instructor",
+    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
+    review: "The natural ingredients align perfectly with my holistic lifestyle. My skin has never felt more balanced and radiant.",
+    rating: 5
+  },
+  {
+    name: "Alexander Lee",
+    role: "Tech Executive",
+    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d",
+    review: "Working long hours in air-conditioned offices was tough on my skin. Dermalix's hydrating line has been a game-changer.",
+    rating: 5
+  },
+  {
+    name: "Isabella Rossi",
+    role: "Fashion Designer",
+    image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f",
+    review: "The attention to detail in these products is remarkable. From packaging to performance, everything is simply luxurious.",
+    rating: 5
   }
 ];
 
@@ -104,18 +131,25 @@ export default function HomePage() {
   // Auto-slide functionality
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev >= reviews.length - 3 ? 0 : prev + 1));
+      setCurrentIndex(prev => {
+        if (prev >= 6) return 0;
+        return prev + 3;
+      });
     }, 4000); // Change slide every 4 seconds
 
     return () => clearInterval(timer);
-  }, [reviews.length]);
+  }, []);
 
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev >= reviews.length - 3 ? 0 : prev + 1));
+    if (currentIndex < 6) {
+      setCurrentIndex(currentIndex + 3);
+    }
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => (prev === 0 ? reviews.length - 3 : prev - 1));
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 3);
+    }
   };
 
   return (
@@ -345,14 +379,14 @@ export default function HomePage() {
             <motion.div
               className="flex transition-all duration-500 ease-in-out"
               animate={{
-                x: `${-currentIndex * 100}%`
+                x: `${-currentIndex * 33.333}%`
               }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
             >
               {reviews.map((review, index) => (
                 <motion.div
                   key={review.name}
-                  className="w-full md:w-1/3 flex-shrink-0 px-4"
+                  className="w-1/3 flex-shrink-0 px-4"
                   initial={{ opacity: 0, y: 20 }}
                   animate={reviewsInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: index * 0.1 }}
@@ -369,6 +403,7 @@ export default function HomePage() {
                       </div>
                       <div>
                         <h3 className="font-semibold">{review.name}</h3>
+                        <p className="text-sm text-muted-foreground">{review.role}</p>
                         <div className="flex">
                           {Array.from({ length: review.rating }).map((_, i) => (
                             <Star key={i} className="h-4 w-4 text-yellow-400 fill-yellow-400" />
@@ -376,7 +411,7 @@ export default function HomePage() {
                         </div>
                       </div>
                     </div>
-                    <p className="text-foreground/70">{review.comment}</p>
+                    <p className="text-foreground/70">{review.review}</p>
                   </div>
                 </motion.div>
               ))}
@@ -384,16 +419,16 @@ export default function HomePage() {
 
             {/* Navigation Dots */}
             <div className="flex justify-center mt-8 gap-2">
-              {reviews.map((_, index) => (
+              {[0, 1, 2].map((index) => (
                 <button
                   key={index}
-                  onClick={() => setCurrentIndex(index)}
+                  onClick={() => setCurrentIndex(index * 3)}
                   className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    currentIndex === index 
+                    Math.floor(currentIndex / 3) === index 
                       ? 'bg-primary w-4' 
                       : 'bg-primary/30 hover:bg-primary/50'
                   }`}
-                  aria-label={`Go to review ${index + 1}`}
+                  aria-label={`Go to review group ${index + 1}`}
                 />
               ))}
             </div>
@@ -411,7 +446,7 @@ export default function HomePage() {
               onClick={nextSlide}
               className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 border border-primary/20 
                        hover:bg-background hover:border-primary/40 transition-all duration-300"
-              disabled={currentIndex >= reviews.length - 3}
+              disabled={currentIndex >= 6}
             >
               <ChevronRight className="w-5 h-5" />
             </button>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronLeft, X } from 'lucide-react';
+import { SkincareParticles } from './skincare-particles';
 
 const announcements = [
   {
@@ -47,7 +48,8 @@ export function AnnouncementSlider() {
   if (!isVisible) return null;
 
   return (
-    <div className="bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 backdrop-blur-sm border-b border-primary/20">
+    <div className="relative bg-gradient-to-r from-primary/5 via-background to-primary/5 backdrop-blur-sm border-b border-primary/20 overflow-hidden">
+      <SkincareParticles />
       <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 max-w-7xl relative">
         <div className="h-12 relative overflow-hidden">
           <AnimatePresence mode="wait">
@@ -57,7 +59,7 @@ export function AnnouncementSlider() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -50, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="absolute inset-0 flex items-center justify-center"
+              className="absolute inset-0 flex items-center justify-center z-10"
             >
               <a 
                 href={announcements[currentSlide].link}
@@ -71,14 +73,14 @@ export function AnnouncementSlider() {
           {/* Navigation Buttons */}
           <button
             onClick={() => setCurrentSlide(prev => prev === 0 ? announcements.length - 1 : prev - 1)}
-            className="absolute left-0 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-background/50 transition-colors duration-300"
+            className="absolute left-0 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-background/50 transition-colors duration-300 z-20"
             aria-label="Previous announcement"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
           <button
             onClick={() => setCurrentSlide(prev => prev >= announcements.length - 1 ? 0 : prev + 1)}
-            className="absolute right-0 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-background/50 transition-colors duration-300"
+            className="absolute right-0 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-background/50 transition-colors duration-300 z-20"
             aria-label="Next announcement"
           >
             <ChevronRight className="w-4 h-4" />
@@ -87,7 +89,7 @@ export function AnnouncementSlider() {
           {/* Close Button */}
           <button
             onClick={() => setIsVisible(false)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-background/50 transition-colors duration-300"
+            className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-background/50 transition-colors duration-300 z-20"
             aria-label="Close announcements"
           >
             <X className="w-4 h-4" />
