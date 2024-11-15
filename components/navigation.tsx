@@ -124,65 +124,77 @@ const routes: Route[] = [
 
 const MegaMenu: React.FC<MegaMenuProps> = ({ content, onClose }) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      className="absolute left-0 right-0 mt-2 bg-background/95 backdrop-blur-xl border-y border-primary/20 shadow-lg shadow-primary/10"
-    >
-      <div className="container mx-auto py-8">
-        <div className="grid grid-cols-12 gap-8">
-          {/* Categories */}
-          <div className="col-span-8 grid grid-cols-2 gap-8">
-            {content.categories.map((category, idx) => (
-              <div key={idx}>
-                <h3 className="font-semibold text-lg mb-4 text-primary">{category.title}</h3>
-                <ul className="space-y-3">
-                  {category.items.map((item, itemIdx) => (
-                    <motion.li
-                      key={itemIdx}
-                      whileHover={{ x: 5 }}
-                      className="text-foreground/80 hover:text-primary transition-colors"
-                    >
-                      <Link href={item.href} onClick={onClose}>
-                        {item.label}
-                      </Link>
-                    </motion.li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          {/* Featured Items */}
-          <div className="col-span-4">
-            <div className="grid gap-4">
-              {content.featured.map((item, idx) => (
-                <Link
-                  key={idx}
-                  href={item.href}
-                  onClick={onClose}
-                  className="group relative overflow-hidden rounded-lg"
-                >
-                  <div className="relative h-48">
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
-                    <div className="absolute bottom-4 left-4">
-                      <h4 className="text-lg font-semibold text-white">{item.title}</h4>
-                    </div>
-                  </div>
-                </Link>
+    <div className="absolute inset-x-0 top-full w-full z-50">
+      <div 
+        className="absolute inset-0 w-full h-full bg-[#0a1930]"
+        style={{
+          backgroundImage: 'url("https://images.unsplash.com/photo-1557683311-eac922347aa1?q=80&w=2029&auto=format&fit=crop")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.2,
+        }}
+      />
+      <div className="absolute inset-0 bg-[#0a1930]/90" />
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        className="relative w-full border-y border-white/10"
+      >
+        <div className="container mx-auto py-12 px-6">
+          <div className="grid grid-cols-12 gap-12">
+            {/* Categories */}
+            <div className="col-span-8 grid grid-cols-2 gap-12">
+              {content.categories.map((category, idx) => (
+                <div key={idx} className="space-y-6">
+                  <h3 className="font-semibold text-lg mb-6 text-white/90">{category.title}</h3>
+                  <ul className="space-y-4">
+                    {category.items.map((item, itemIdx) => (
+                      <motion.li
+                        key={itemIdx}
+                        whileHover={{ x: 5 }}
+                        className="text-white/70 hover:text-white transition-all duration-200 ease-in-out"
+                      >
+                        <Link href={item.href} onClick={onClose} className="block py-1">
+                          {item.label}
+                        </Link>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
               ))}
+            </div>
+
+            {/* Featured Items */}
+            <div className="col-span-4">
+              <div className="grid gap-6">
+                {content.featured.map((item, idx) => (
+                  <Link
+                    key={idx}
+                    href={item.href}
+                    onClick={onClose}
+                    className="group relative overflow-hidden rounded-xl"
+                  >
+                    <div className="relative h-52">
+                      <Image
+                        src={item.image}
+                        alt={item.title}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors duration-300" />
+                      <div className="absolute bottom-6 left-6">
+                        <h4 className="text-lg font-semibold text-white group-hover:text-blue-200 transition-colors duration-300">{item.title}</h4>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 };
 
