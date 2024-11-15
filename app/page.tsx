@@ -159,7 +159,7 @@ export default function HomePage() {
       {/* Hero Section */}
       <section 
         ref={heroRef}
-        className="min-h-[90vh] relative flex items-center overflow-hidden"
+        className="min-h-[60vh] relative flex items-center overflow-hidden"
       >
         <div className="container mx-auto px-4 relative z-10">
           <motion.div
@@ -184,6 +184,42 @@ export default function HomePage() {
               </Button>
             </div>
           </motion.div>
+        </div>
+      </section>
+
+
+     {/* Shop by Concern Section */}
+     <section
+        ref={concernsRef}
+        className="py-20 bg-background/50 backdrop-blur-sm"
+      >
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={concernsInView ? { opacity: 1, y: 0 } : {}}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl font-bold mb-4">Shop by Concern</h2>
+            <p className="text-foreground/70">Target your specific skincare needs</p>
+          </motion.div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {concerns.map((concern, index) => (
+              <motion.div
+                key={concern.name}
+                initial={{ opacity: 0, y: 20 }}
+                animate={concernsInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: index * 0.1 }}
+                className="group relative p-6 rounded-2xl border border-primary/10 hover:border-primary/30 transition-colors"
+              >
+                <div className="text-3xl mb-4">{concern.icon}</div>
+                <h3 className="text-lg font-medium mb-2">{concern.name}</h3>
+                <Button variant="ghost" className="w-full group-hover:text-primary">
+                  Learn More
+                </Button>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -283,41 +319,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Shop by Concern Section */}
-      <section
-        ref={concernsRef}
-        className="py-20 bg-background/50 backdrop-blur-sm"
-      >
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={concernsInView ? { opacity: 1, y: 0 } : {}}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl font-bold mb-4">Shop by Concern</h2>
-            <p className="text-foreground/70">Target your specific skincare needs</p>
-          </motion.div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {concerns.map((concern, index) => (
-              <motion.div
-                key={concern.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={concernsInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: index * 0.1 }}
-                className="group relative p-6 rounded-2xl border border-primary/10 hover:border-primary/30 transition-colors"
-              >
-                <div className="text-3xl mb-4">{concern.icon}</div>
-                <h3 className="text-lg font-medium mb-2">{concern.name}</h3>
-                <Button variant="ghost" className="w-full group-hover:text-primary">
-                  Learn More
-                </Button>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
+ 
       {/* AI Skin Analysis Section */}
       <section
         ref={aiRef}
