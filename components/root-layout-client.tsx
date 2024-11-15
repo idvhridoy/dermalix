@@ -90,7 +90,7 @@ export function RootLayoutClient({
           <Navigation />
           
           {/* Page Content with Transitions */}
-          <main className="flex-grow px-[10px]">
+          <main className="flex-grow container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 max-w-7xl">
             <AnimatePresence mode="wait">
               <motion.div
                 key={pathname}
@@ -108,7 +108,7 @@ export function RootLayoutClient({
           <VisitorStats />
 
           {/* Footer */}
-          <div className="px-[10px]">
+          <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 max-w-7xl">
             <Footer />
           </div>
 
