@@ -144,20 +144,28 @@ const reviews = [
 
 const heroImages = [
   {
-    url: 'https://images.unsplash.com/photo-1612538498456-e861df91d4d0',
-    alt: 'Luxury skincare products'
+    url: 'https://images.unsplash.com/photo-1621798744997-3c56ee0d54b7',
+    alt: 'Woman with glowing skin close-up'
   },
   {
-    url: 'https://images.unsplash.com/photo-1576426863848-c21f53c60b19',
-    alt: 'Skincare routine'
+    url: 'https://images.unsplash.com/photo-1605462863863-10d9e47e15ee',
+    alt: 'Luxury skincare products on marble'
   },
   {
-    url: 'https://images.unsplash.com/photo-1570554886111-e80fcca6a029',
+    url: 'https://images.unsplash.com/photo-1616394584738-fc6e612e71b9',
+    alt: 'Woman applying face cream'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273',
+    alt: 'Close-up of woman with perfect skin'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1597931752949-98c74b5b159f',
     alt: 'Natural skincare ingredients'
   },
   {
-    url: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571',
-    alt: 'Professional skin treatment'
+    url: 'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c',
+    alt: 'Woman with radiant skin'
   }
 ];
 
@@ -197,12 +205,19 @@ export default function HomePage() {
     }
   };
 
+  // Next slide function
+  const nextHeroSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+  };
+
+  // Previous slide function
+  const prevHeroSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + heroImages.length) % heroImages.length);
+  };
+
   // Auto-slide functionality for hero section
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-    }, 5000); // Change slide every 5 seconds
-
+    const timer = setInterval(nextHeroSlide, 5000); // Change slide every 5 seconds
     return () => clearInterval(timer);
   }, []);
 
@@ -214,17 +229,20 @@ export default function HomePage() {
       {/* Hero Section */}
       <section 
         ref={heroRef}
-        className="min-h-[80vh] relative flex items-center overflow-hidden"
+        className="min-h-[70vh] relative flex items-center overflow-hidden"
       >
         {/* Background Slider */}
         <div className="absolute inset-0">
-          <AnimatePresence initial={false}>
+          <AnimatePresence initial={false} mode="wait">
             <motion.div
               key={currentSlide}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.7 }}
+              initial={{ opacity: 0, scale: 1.1 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ 
+                duration: 0.7,
+                ease: [0.4, 0, 0.2, 1]
+              }}
               className="relative w-full h-full"
             >
               <Image
@@ -234,7 +252,7 @@ export default function HomePage() {
                 className="object-cover"
                 priority
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/50 to-background/90" />
+              <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/50 to-background/95" />
             </motion.div>
           </AnimatePresence>
         </div>
@@ -265,6 +283,26 @@ export default function HomePage() {
           </motion.div>
         </div>
 
+        {/* Arrow Controls */}
+        <button
+          onClick={prevHeroSlide}
+          className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/80 border border-primary/20 
+                   hover:bg-background hover:border-primary/40 transition-all duration-300 backdrop-blur-sm
+                   group z-20"
+          aria-label="Previous slide"
+        >
+          <ChevronRight className="w-6 h-6 rotate-180 text-primary group-hover:-translate-x-0.5 transition-transform" />
+        </button>
+        <button
+          onClick={nextHeroSlide}
+          className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/80 border border-primary/20 
+                   hover:bg-background hover:border-primary/40 transition-all duration-300 backdrop-blur-sm
+                   group z-20"
+          aria-label="Next slide"
+        >
+          <ChevronRight className="w-6 h-6 text-primary group-hover:translate-x-0.5 transition-transform" />
+        </button>
+
         {/* Slide Indicators */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-20">
           {heroImages.map((_, index) => (
@@ -273,7 +311,7 @@ export default function HomePage() {
               onClick={() => setCurrentSlide(index)}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
                 currentSlide === index 
-                  ? 'w-6 bg-primary' 
+                  ? 'w-8 bg-primary' 
                   : 'bg-primary/30 hover:bg-primary/50'
               }`}
               aria-label={`Go to slide ${index + 1}`}
@@ -353,7 +391,7 @@ export default function HomePage() {
                     src={category.image}
                     alt={category.name}
                     fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-110"
+                    className="object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
                   <div className="absolute bottom-6 left-6">
@@ -398,7 +436,7 @@ export default function HomePage() {
                     src={product.image}
                     alt={product.name}
                     fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-110"
+                    className="object-cover"
                   />
                 </div>
                 <div className="p-6">
