@@ -1,23 +1,22 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Activity, Users, Globe, Map } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Globe, Users, Activity, Map } from 'lucide-react';
 
-// Simulated visitor data - In a real app, this would come from your analytics backend
-const generateRandomVisitors = () => {
+// Helper function to generate random visitor data
+function generateRandomVisitors() {
   return {
-    total: Math.floor(Math.random() * 1000) + 500,
-    active: Math.floor(Math.random() * 100) + 50,
+    total: Math.floor(Math.random() * 10000) + 5000,
+    active: Math.floor(Math.random() * 500) + 100,
     countries: [
-      { name: 'United States', count: Math.floor(Math.random() * 100) + 50 },
-      { name: 'United Kingdom', count: Math.floor(Math.random() * 50) + 30 },
-      { name: 'Germany', count: Math.floor(Math.random() * 40) + 20 },
-      { name: 'Japan', count: Math.floor(Math.random() * 30) + 15 },
-      { name: 'Canada', count: Math.floor(Math.random() * 25) + 10 },
-    ]
+      { name: 'United States', count: Math.floor(Math.random() * 1000) + 500 },
+      { name: 'United Kingdom', count: Math.floor(Math.random() * 500) + 200 },
+      { name: 'Germany', count: Math.floor(Math.random() * 300) + 100 },
+      { name: 'Japan', count: Math.floor(Math.random() * 200) + 50 },
+    ],
   };
-};
+}
 
 export function VisitorStats() {
   const [stats, setStats] = useState(generateRandomVisitors());
@@ -36,15 +35,28 @@ export function VisitorStats() {
     <motion.div
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
-      className="fixed bottom-4 right-4 z-50"
+      className="fixed bottom-[50%] right-4 z-50 translate-y-1/2"
     >
       <button
         onClick={() => setIsVisible(!isVisible)}
-        className="flex items-center space-x-2 px-4 py-2 rounded-full bg-background/90 border border-primary/20 
+        className="flex items-center space-x-2 px-4 py-2 rounded-full bg-red-600/90 border border-primary/20 
                    hover:border-primary/40 transition-all duration-300 neon-border"
       >
-        <Activity className="w-4 h-4 text-primary" />
-        <span className="text-sm text-primary neon-text">Live Visitors</span>
+        <Activity className="w-4 h-4 text-white animate-pulse" />
+        <motion.span 
+          animate={{ 
+            opacity: [1, 0.7, 1],
+            scale: [1, 1.02, 1]
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="text-sm text-white neon-text"
+        >
+          Live Visitors
+        </motion.span>
       </button>
 
       <AnimatePresence>
@@ -53,10 +65,18 @@ export function VisitorStats() {
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="absolute bottom-full right-0 mb-2 w-80 p-4 rounded-lg bg-background/90 backdrop-blur-lg 
+            className="absolute right-0 top-[calc(50%-120px)] mb-2 w-80 p-4 rounded-lg bg-background/90 backdrop-blur-lg 
                      border border-primary/20 neon-border"
           >
-            <div className="space-y-4">
+            <button
+              onClick={() => setIsVisible(false)}
+              className="absolute -top-3 -right-3 p-1.5 rounded-full bg-red-600 hover:bg-red-700 text-white shadow-lg"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+            <div className="relative space-y-4 pt-1">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Users className="w-4 h-4 text-primary" />
