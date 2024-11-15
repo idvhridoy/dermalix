@@ -13,6 +13,7 @@ import {
   Utensils as UtensilsIcon, 
   Coffee as CoffeeIcon 
 } from 'lucide-react';
+import { Heart } from 'lucide-react';
 
 const lifestyleQuestions = {
   sleep: [
@@ -194,6 +195,14 @@ export default function LifestyleQuizPage() {
     exit: { x: -50, opacity: 0 }
   };
 
+  const restartQuiz = () => {
+    setShowResult(false);
+    setCurrentCategory(0);
+    setCurrentQuestion(0);
+    setAnswers({});
+    setProgress(0);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -256,49 +265,47 @@ export default function LifestyleQuizPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8"
+            className="max-w-4xl mx-auto bg-black rounded-lg shadow-lg p-8 text-white"
           >
             <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold mb-4">Your Lifestyle Analysis</h1>
-              <p className="text-xl text-muted-foreground">
-                Your lifestyle score: {getLifestyleScore()}/100
+              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 text-transparent bg-clip-text">Quiz Results</h1>
+              <p className="text-2xl text-purple-300">
+                You scored {getLifestyleScore()} out of {totalQuestions}
               </p>
             </div>
 
             <div className="grid gap-8">
-              <div className="bg-background/50 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4">Recommendations</h2>
-                <ul className="space-y-4">
-                  {getRecommendations().map((recommendation, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <div className="bg-primary/10 p-2 rounded-lg mt-1">
-                        <ActivityIcon className="w-4 h-4 text-primary" />
-                      </div>
-                      <p className="text-lg">{recommendation}</p>
-                    </li>
-                  ))}
-                </ul>
+              <div className="bg-zinc-900/50 p-6 rounded-lg border border-zinc-800">
+                <h2 className="text-2xl font-bold mb-4 text-blue-400">Feedback</h2>
+                <div className="flex items-start gap-3">
+                  <div className="bg-purple-500/10 p-2 rounded-lg mt-1">
+                    <Heart className="w-4 h-4 text-purple-400" />
+                  </div>
+                  <p className="text-lg text-zinc-300">
+                    {getLifestyleScore() === totalQuestions 
+                      ? "Perfect score! You have excellent lifestyle habits!" 
+                      : getLifestyleScore() >= totalQuestions * 0.75 
+                        ? "Great job! Your lifestyle choices support healthy habits." 
+                        : getLifestyleScore() >= totalQuestions * 0.5
+                          ? "Good effort! Keep working on your lifestyle habits." 
+                          : "There's room for improvement in your lifestyle routine."}
+                  </p>
+                </div>
               </div>
 
               <div className="mt-8 flex justify-center gap-4">
                 <Button
-                  onClick={() => {
-                    setShowResult(false);
-                    setCurrentCategory(0);
-                    setCurrentQuestion(0);
-                    setAnswers({});
-                    setProgress(0);
-                  }}
+                  onClick={restartQuiz}
                   size="lg"
                   variant="outline"
-                  className="gap-2"
+                  className="gap-2 border-purple-500 text-purple-400 hover:bg-purple-500/10"
                 >
                   <ArrowRightIcon className="w-4 h-4 rotate-180" />
                   Restart Quiz
                 </Button>
                 <Button
                   size="lg"
-                  className="gap-2"
+                  className="gap-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
                 >
                   View All Quizzes
                   <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

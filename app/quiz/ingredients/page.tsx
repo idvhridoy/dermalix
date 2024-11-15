@@ -140,23 +140,23 @@ export default function IngredientsQuiz() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="max-w-4xl mx-auto bg-card rounded-lg shadow-lg p-8"
+            className="max-w-4xl mx-auto bg-black rounded-lg shadow-lg p-8 text-white"
           >
             <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold mb-4">Quiz Results</h1>
-              <p className="text-xl text-muted-foreground">
+              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 text-transparent bg-clip-text">Quiz Results</h1>
+              <p className="text-2xl text-purple-300">
                 You scored {score} out of {ingredientQuestions.length}
               </p>
             </div>
 
             <div className="grid gap-8">
-              <div className="bg-background/50 p-6 rounded-lg">
-                <h2 className="text-2xl font-bold mb-4">Feedback</h2>
+              <div className="bg-zinc-900/50 p-6 rounded-lg border border-zinc-800">
+                <h2 className="text-2xl font-bold mb-4 text-blue-400">Feedback</h2>
                 <div className="flex items-start gap-3">
-                  <div className="bg-primary/10 p-2 rounded-lg mt-1">
-                    <Beaker className="w-4 h-4 text-primary" />
+                  <div className="bg-purple-500/10 p-2 rounded-lg mt-1">
+                    <Beaker className="w-4 h-4 text-purple-400" />
                   </div>
-                  <p className="text-lg">
+                  <p className="text-lg text-zinc-300">
                     {score === ingredientQuestions.length 
                       ? "Perfect score! You're an ingredient expert!" 
                       : score >= ingredientQuestions.length * 0.75 
@@ -173,14 +173,14 @@ export default function IngredientsQuiz() {
                   onClick={restartQuiz}
                   size="lg"
                   variant="outline"
-                  className="gap-2"
+                  className="gap-2 border-purple-500 text-purple-400 hover:bg-purple-500/10"
                 >
                   <ArrowRight className="w-4 h-4 rotate-180" />
                   Restart Quiz
                 </Button>
                 <Button
                   size="lg"
-                  className="gap-2"
+                  className="gap-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
                 >
                   View All Quizzes
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
