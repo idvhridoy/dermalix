@@ -37,7 +37,12 @@ interface MegaMenuData {
 interface Route {
   href?: string;
   label: string;
-  megaMenu?: keyof MegaMenuData;
+  megaMenu?: string;
+  children?: {
+    label: string;
+    href: string;
+    description?: string;
+  }[];
 }
 
 interface MegaMenuProps {
@@ -45,53 +50,19 @@ interface MegaMenuProps {
   onClose: () => void;
 }
 
-const megaMenuContent: MegaMenuData = {
-  products: {
-    categories: [
-      {
-        title: 'Shop By Category',
-        items: [
-          { label: 'Cleansers', href: '/products/cleansers' },
-          { label: 'Serums', href: '/products/serums' },
-          { label: 'Moisturizers', href: '/products/moisturizers' },
-          { label: 'Sunscreens', href: '/products/sunscreens' },
-          { label: 'Treatments', href: '/products/treatments' },
-        ]
-      },
-      {
-        title: 'Shop By Concern',
-        items: [
-          { label: 'Acne & Breakouts', href: '/concerns/acne' },
-          { label: 'Anti-Aging', href: '/concerns/aging' },
-          { label: 'Brightening', href: '/concerns/brightening' },
-          { label: 'Hydration', href: '/concerns/hydration' },
-          { label: 'Sensitive Skin', href: '/concerns/sensitive' },
-        ]
-      }
-    ],
-    featured: [
-      {
-        title: 'Best Sellers',
-        image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be',
-        href: '/products/bestsellers'
-      },
-      {
-        title: 'New Arrivals',
-        image: 'https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19',
-        href: '/products/new'
-      }
-    ]
-  },
+const megaMenuContent: Record<string, MegaMenuContent> = {
   about: {
     categories: [
       {
         title: 'Our Story',
         items: [
           { label: 'Overview', href: '/about' },
-          { label: 'Mission', href: '/mission' },
-          { label: 'Vision', href: '/vision' },
-          { label: 'Goals', href: '/goals' },
-          { label: 'Achievements', href: '/achievements' },
+          { label: 'Mission', href: '/about/mission' },
+          { label: 'Vision', href: '/about/vision' },
+          { label: 'Goals', href: '/about/goals' },
+          { label: 'Achievements', href: '/about/achievements' },
+          { label: 'Roadmap', href: '/about/roadmap' },
+          { label: 'Values', href: '/about/values' }
         ]
       },
       {
@@ -99,16 +70,30 @@ const megaMenuContent: MegaMenuData = {
         items: [
           { label: 'Research & Development', href: '/about/research' },
           { label: 'Technology', href: '/about/technology' },
-          { label: 'Sustainability', href: '/about/sustainability' },
-          { label: 'Clinical Studies', href: '/about/studies' },
+          { label: 'Clinical Studies', href: '/about/clinical-studies' },
+          { label: 'Sustainability', href: '/about/sustainability' }
+        ]
+      },
+      {
+        title: 'Company',
+        items: [
+          { label: 'Team', href: '/about/team' },
+          { label: 'Press', href: '/about/press' },
+          { label: 'Careers', href: '/about/careers' },
+          { label: 'Contact', href: '/about/contact' }
         ]
       }
     ],
     featured: [
       {
-        title: 'Our Lab',
-        image: 'https://images.unsplash.com/photo-1582719471327-5bd41fcf7f7f?q=80&w=1972&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        href: '/about/lab'
+        title: 'Meet Our Team',
+        image: '/images/featured/team-lab.jpg',
+        href: '/about/team'
+      },
+      {
+        title: 'Latest Research',
+        href: '/about/clinical-studies',
+        image: '/images/featured/research-lab.jpg'
       }
     ]
   }
@@ -116,93 +101,106 @@ const megaMenuContent: MegaMenuData = {
 
 const routes: Route[] = [
   { href: '/', label: 'Home' },
-  { label: 'Products', megaMenu: 'products' },
+  { 
+    label: 'Products',
+    children: [
+      {
+        label: 'Acne Treatment Serum',
+        href: '/products/acne-treatment-serum',
+        description: 'Salicylic Acid 2% & Niacinamide 2% for effective acne control'
+      },
+      {
+        label: 'Brightening Serum',
+        href: '/products/brightening-serum',
+        description: 'Alpha Arbutin 2% & Niacinamide 2% for radiant skin'
+      }
+    ]
+  },
   { label: 'About', megaMenu: 'about' },
   { href: '/reviews', label: 'Reviews' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/faq', label: 'FAQ' },
   { href: '/contact', label: 'Contact' },
 ];
 
 const MegaMenu: React.FC<MegaMenuProps> = ({ content, onClose }) => {
-  return (
-    <div className="absolute inset-x-0 top-full w-full z-50">
-      <div 
-        className="absolute inset-0 w-full h-full bg-[#0a1930]"
-        style={{
-          backgroundImage: 'url("https://images.unsplash.com/photo-1557683311-eac922347aa1?q=80&w=2029&auto=format&fit=crop")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          opacity: 0.2,
-        }}
-      />
-      <div className="absolute inset-0 bg-[#0a1930]/90" />
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        className="relative w-full border-y border-white/10"
-      >
-        <div className="container mx-auto py-12 px-6">
-          <div className="grid grid-cols-12 gap-12">
-            {/* Categories */}
-            <div className="col-span-8 grid grid-cols-2 gap-12">
-              {content.categories.map((category, idx) => (
-                <div key={idx} className="space-y-6">
-                  <h3 className="font-semibold text-lg mb-6 text-white/90">{category.title}</h3>
-                  <ul className="space-y-4">
-                    {category.items.map((item, itemIdx) => (
-                      <motion.li
-                        key={itemIdx}
-                        whileHover={{ x: 5 }}
-                        className="text-white/70 hover:text-white transition-all duration-200 ease-in-out"
-                      >
-                        <Link href={item.href} onClick={onClose} className="block py-1">
-                          {item.label}
-                        </Link>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
+  const handleLinkClick = () => {
+    onClose();
+  };
 
-            {/* Featured Items */}
-            <div className="col-span-4">
-              <div className="grid gap-6">
-                {content.featured.map((item, idx) => (
-                  <Link
-                    key={idx}
-                    href={item.href}
-                    onClick={onClose}
-                    className="group relative overflow-hidden rounded-xl"
-                  >
-                    <div className="relative h-52">
-                      <Image
-                        src={item.image}
-                        alt={item.title}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors duration-300" />
-                      <div className="absolute bottom-6 left-6">
-                        <h4 className="text-lg font-semibold text-white group-hover:text-blue-200 transition-colors duration-300">{item.title}</h4>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      className="absolute top-full left-0 w-full bg-background/95 backdrop-blur-sm border-y border-primary/10 shadow-lg z-50"
+    >
+      <div className="container mx-auto py-8 px-4">
+        <div className="grid grid-cols-12 gap-8">
+          {/* Categories Section - 9 columns */}
+          <div className="col-span-9 grid grid-cols-3 gap-8">
+            {content.categories.map((category, idx) => (
+              <div key={idx} className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground/90">{category.title}</h3>
+                <ul className="space-y-2">
+                  {category.items.map((item, itemIdx) => (
+                    <li key={itemIdx}>
+                      <Link
+                        href={item.href}
+                        onClick={handleLinkClick}
+                        className="text-foreground/70 hover:text-primary transition-colors block py-1.5"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div>
+            ))}
+          </div>
+
+          {/* Featured Section - 3 columns */}
+          <div className="col-span-3 space-y-6">
+            {content.featured.map((item, idx) => (
+              <Link
+                key={idx}
+                href={item.href}
+                onClick={handleLinkClick}
+                className="block group relative overflow-hidden rounded-lg"
+              >
+                <div className="relative h-48">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors duration-300" />
+                  <div className="absolute bottom-4 left-4">
+                    <h4 className="text-lg font-semibold text-white group-hover:text-blue-200 transition-colors duration-300">
+                      {item.title}
+                    </h4>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
-      </motion.div>
-    </div>
+      </div>
+    </motion.div>
   );
 };
 
 export function Navigation() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const [activeMegaMenu, setActiveMegaMenu] = useState<keyof MegaMenuData | null>(null);
+  const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
+
+  // Close mega menu when route changes
+  useEffect(() => {
+    setActiveMegaMenu(null);
+  }, [pathname]);
 
   // Initialize scroll position on mount
   useLayoutEffect(() => {
@@ -224,8 +222,12 @@ export function Navigation() {
     };
   }, []);
 
-  const toggleMegaMenu = (menuKey: keyof MegaMenuData | null) => {
-    setActiveMegaMenu(menuKey);
+  const toggleMegaMenu = (menuKey: string | null) => {
+    if (activeMegaMenu === menuKey) {
+      setActiveMegaMenu(null);
+    } else {
+      setActiveMegaMenu(menuKey);
+    }
   };
 
   return (
@@ -251,44 +253,62 @@ export function Navigation() {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
-            {routes.map((route) => (
-              <div
-                key={route.label}
-                onMouseEnter={() => route.megaMenu && toggleMegaMenu(route.megaMenu)}
-                onMouseLeave={() => toggleMegaMenu(null)}
-                className="relative py-8"
-              >
+            {routes.map((route, idx) => (
+              <div key={idx} className="relative group">
                 {route.href ? (
                   <Link
                     href={route.href}
-                    className={cn(
-                      'text-sm font-medium transition-colors hover:text-primary',
-                      pathname === route.href ? 'text-primary' : 'text-foreground/80'
-                    )}
+                    className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
                   >
                     {route.label}
                   </Link>
-                ) : (
+                ) : route.children ? (
+                  <div>
+                    <button
+                      className="flex items-center text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
+                      onClick={() => route.megaMenu && toggleMegaMenu(route.megaMenu)}
+                    >
+                      {route.label}
+                      <ChevronDown className="ml-1 h-4 w-4" />
+                    </button>
+                    <div className="absolute left-0 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                      <div className="bg-background/95 backdrop-blur-sm border border-primary/10 rounded-lg shadow-lg p-4 min-w-[200px]">
+                        {route.children.map((child, childIdx) => (
+                          <Link
+                            key={childIdx}
+                            href={child.href}
+                            className="block px-4 py-2 text-sm text-foreground/80 hover:text-primary hover:bg-primary/5 rounded-md transition-colors"
+                          >
+                            <div className="font-medium">{child.label}</div>
+                            {child.description && (
+                              <div className="text-xs text-foreground/60 mt-1">{child.description}</div>
+                            )}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ) : route.megaMenu ? (
                   <button
-                    className={cn(
-                      'text-sm font-medium transition-colors hover:text-primary flex items-center space-x-1',
-                      activeMegaMenu === route.megaMenu ? 'text-primary' : 'text-foreground/80'
-                    )}
+                    className="flex items-center text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
+                    onClick={() => toggleMegaMenu(route.megaMenu)}
                   >
-                    <span>{route.label}</span>
-                    <ChevronDown className="h-4 w-4" />
+                    {route.label}
+                    <ChevronDown className={cn(
+                      "ml-1 h-4 w-4 transition-transform duration-200",
+                      activeMegaMenu === route.megaMenu ? "rotate-180" : ""
+                    )} />
                   </button>
-                )}
+                ) : null}
 
-                {/* Mega Menu */}
-                <AnimatePresence>
-                  {route.megaMenu && activeMegaMenu === route.megaMenu && (
-                    <MegaMenu 
+                {route.megaMenu && activeMegaMenu === route.megaMenu && (
+                  <AnimatePresence>
+                    <MegaMenu
                       content={megaMenuContent[route.megaMenu]}
                       onClose={() => toggleMegaMenu(null)}
                     />
-                  )}
-                </AnimatePresence>
+                  </AnimatePresence>
+                )}
               </div>
             ))}
           </nav>
