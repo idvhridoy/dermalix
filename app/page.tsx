@@ -5,7 +5,7 @@ import { useInView } from 'react-intersection-observer';
 import Image from 'next/image';
 import { InteractiveParticles } from '@/components/interactive-particles';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, Star, ArrowRight, Brain, Sparkles } from 'lucide-react';
+import { ChevronRight, Star, ArrowRight, Brain, Sparkles, Zap, Timer, Sun, Shield, Droplet, BadgeAlert } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { MouseTrailEffect } from '@/components/mouse-trail-effect';
 
@@ -44,12 +44,36 @@ const topProducts = [
 ];
 
 const concerns = [
-  { name: 'Acne & Breakouts', icon: '', href: '/concerns/acne' },
-  { name: 'Anti-Aging', icon: '', href: '/concerns/aging' },
-  { name: 'Hyperpigmentation', icon: '', href: '/concerns/pigmentation' },
-  { name: 'Sensitive Skin', icon: '', href: '/concerns/sensitive' },
-  { name: 'Dryness', icon: '', href: '/concerns/dryness' },
-  { name: 'Oily Skin', icon: '', href: '/concerns/oily' },
+  { 
+    name: 'Acne & Breakouts', 
+    image: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15',  
+    href: '/concerns/acne' 
+  },
+  { 
+    name: 'Anti-Aging', 
+    image: 'https://images.unsplash.com/photo-1601412436009-d964bd02edbc',  
+    href: '/concerns/aging' 
+  },
+  { 
+    name: 'Hyperpigmentation', 
+    image: 'https://images.unsplash.com/photo-1581182800629-7d90925ad072',  
+    href: '/concerns/pigmentation' 
+  },
+  { 
+    name: 'Sensitive Skin', 
+    image: 'https://images.unsplash.com/photo-1590439471364-192aa70c0b53',  
+    href: '/concerns/sensitive' 
+  },
+  { 
+    name: 'Dryness', 
+    image: 'https://images.unsplash.com/photo-1523263685509-57c1d050d19b',  
+    href: '/concerns/dryness' 
+  },
+  { 
+    name: 'Oily Skin', 
+    image: 'https://images.unsplash.com/photo-1505944270255-72b8c68c6a70',
+    href: '/concerns/oily' 
+  },
 ];
 
 const reviews = [
@@ -211,10 +235,17 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={concernsInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: index * 0.1 }}
-                className="group relative p-6 rounded-2xl border border-primary/10 hover:border-primary/30 transition-colors"
+                className="group relative p-6 rounded-2xl border border-primary/10 hover:border-primary/30 transition-colors overflow-hidden"
               >
-                <div className="text-3xl mb-4">{concern.icon}</div>
-                <h3 className="text-lg font-medium mb-2">{concern.name}</h3>
+                <div className="relative w-full h-32 mb-4 rounded-lg overflow-hidden">
+                  <Image
+                    src={concern.image}
+                    alt={concern.name}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                </div>
+                <h3 className="text-lg font-medium mb-2 text-center">{concern.name}</h3>
                 <Button variant="ghost" className="w-full group-hover:text-primary">
                   Learn More
                 </Button>
