@@ -1,6 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { 
+  ArrowRight as ArrowRightIcon, 
+  ArrowLeft as ArrowLeftIcon, 
+  Sparkles as SparklesIcon
+} from 'lucide-react';
 
 const routineQuestions = [
   {
@@ -38,6 +46,7 @@ export default function RoutineQuiz() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
   const [quizComplete, setQuizComplete] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const handleAnswerClick = (selectedOption: string) => {
     const newSelectedAnswers = [...selectedAnswers, selectedOption];
@@ -49,12 +58,29 @@ export default function RoutineQuiz() {
     } else {
       setQuizComplete(true);
     }
+    
+    setProgress(((nextQuestion) / routineQuestions.length) * 100);
   };
 
   const restartQuiz = () => {
     setCurrentQuestion(0);
     setSelectedAnswers([]);
     setQuizComplete(false);
+    setProgress(0);
+  };
+
+  const goBack = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(prev => prev - 1);
+      setSelectedAnswers(prev => prev.slice(0, -1));
+      setProgress(((currentQuestion - 1) / routineQuestions.length) * 100);
+    }
+  };
+
+  const questionVariants = {
+    initial: { x: 50, opacity: 0 },
+    animate: { x: 0, opacity: 1 },
+    exit: { x: -50, opacity: 0 }
   };
 
   const generateRoutineRecommendation = () => {
@@ -95,43 +121,117 @@ export default function RoutineQuiz() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <h1 className="text-3xl font-bold mb-6 text-center">Skincare Routine Quiz</h1>
-      
-      {quizComplete ? (
-        <div className="bg-white shadow-md rounded-lg p-6">
-          <h2 className="text-2xl font-semibold mb-4">Your Personalized Skincare Routine</h2>
-          <pre className="bg-gray-100 p-4 rounded-lg whitespace-pre-wrap">
-            {generateRoutineRecommendation()}
-          </pre>
-          <button 
-            onClick={restartQuiz}
-            className="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-          >
-            Restart Routine Quiz
-          </button>
-        </div>
-      ) : (
-        <div className="bg-white shadow-md rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">
-            Question {currentQuestion + 1} of {routineQuestions.length}
-          </h2>
-          <p className="mb-4 text-lg">
-            {routineQuestions[currentQuestion].question}
-          </p>
-          <div className="space-y-3">
-            {routineQuestions[currentQuestion].options.map((option, index) => (
-              <button
-                key={index}
-                onClick={() => handleAnswerClick(option)}
-                className="w-full text-left bg-gray-100 hover:bg-gray-200 p-3 rounded-lg transition-colors"
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8">
+        {!quizComplete ? (
+          <div className="max-w-2xl mx-auto">
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <SparklesIcon className="w-6 h-6 text-primary" />
+                  <h1 className="text-3xl font-bold">
+                    Skincare Routine Builder
+                  </h1>
+                </div>
+                {currentQuestion > 0 && (
+                  <Button
+                    variant="ghost"
+                    onClick={goBack}
+                    className="flex items-center gap-2"
+                  >
+                    <ArrowLeftIcon className="w-4 h-4" />
+                    Back
+                  </Button>
+                )}
+              </div>
+              <Progress value={progress} className="h-2" />
+              <p className="text-center mt-2 text-muted-foreground">
+                {Math.round(progress)}% Complete
+              </p>
+            </div>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentQuestion}
+                variants={questionVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                className="bg-card rounded-xl p-8 shadow-lg"
               >
-                {option}
-              </button>
-            ))}
+                <h2 className="text-2xl font-semibold mb-6">
+                  {routineQuestions[currentQuestion].question}
+                </h2>
+                <div className="grid gap-4">
+                  {routineQuestions[currentQuestion].options.map((option, index) => (
+                    <Button
+                      key={index}
+                      variant="outline"
+                      className="w-full py-6 text-lg justify-start px-6 hover:bg-primary/5"
+                      onClick={() => handleAnswerClick(option)}
+                    >
+                      {option}
+                    </Button>
+                  ))}
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
-        </div>
-      )}
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-4xl mx-auto bg-card rounded-lg shadow-lg p-8"
+          >
+            <div className="text-center mb-8">
+              <h1 className="text-4xl font-bold mb-4">Your Personalized Routine</h1>
+              <p className="text-xl text-muted-foreground">
+                Based on your skin type and concerns
+              </p>
+            </div>
+
+            <div className="grid gap-8">
+              <div className="bg-background/50 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4">Recommended Products</h2>
+                <div className="space-y-4">
+                  {generateRoutineRecommendation().split('\n').map((line, index) => (
+                    line.trim() && (
+                      <div key={index} className="flex items-start gap-3">
+                        {line.startsWith('-') && (
+                          <div className="bg-primary/10 p-2 rounded-lg mt-1">
+                            <SparklesIcon className="w-4 h-4 text-primary" />
+                          </div>
+                        )}
+                        <p className="text-lg">{line.replace('-', '').trim()}</p>
+                      </div>
+                    )
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-8 flex justify-center gap-4">
+                <Button
+                  onClick={restartQuiz}
+                  size="lg"
+                  variant="outline"
+                  className="gap-2"
+                >
+                  <ArrowRightIcon className="w-4 h-4 rotate-180" />
+                  Restart Quiz
+                </Button>
+                <Button
+                  size="lg"
+                  className="gap-2"
+                >
+                  View All Quizzes
+                  <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 }
