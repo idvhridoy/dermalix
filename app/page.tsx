@@ -7,6 +7,7 @@ import { InteractiveParticles } from '@/components/interactive-particles';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, Star, ArrowRight, Brain, Sparkles } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { MouseTrailEffect } from '@/components/mouse-trail-effect';
 
 const categories = [
   { name: 'Cleansers', image: 'https://images.unsplash.com/photo-1556228720-195a672e8a03', href: '/products/cleansers' },
@@ -43,12 +44,12 @@ const topProducts = [
 ];
 
 const concerns = [
-  { name: 'Acne & Breakouts', icon: '🔍', href: '/concerns/acne' },
-  { name: 'Anti-Aging', icon: '✨', href: '/concerns/aging' },
-  { name: 'Hyperpigmentation', icon: '🌟', href: '/concerns/pigmentation' },
-  { name: 'Sensitive Skin', icon: '🌸', href: '/concerns/sensitive' },
-  { name: 'Dryness', icon: '💧', href: '/concerns/dryness' },
-  { name: 'Oily Skin', icon: '🍃', href: '/concerns/oily' },
+  { name: 'Acne & Breakouts', icon: '', href: '/concerns/acne' },
+  { name: 'Anti-Aging', icon: '', href: '/concerns/aging' },
+  { name: 'Hyperpigmentation', icon: '', href: '/concerns/pigmentation' },
+  { name: 'Sensitive Skin', icon: '', href: '/concerns/sensitive' },
+  { name: 'Dryness', icon: '', href: '/concerns/dryness' },
+  { name: 'Oily Skin', icon: '', href: '/concerns/oily' },
 ];
 
 const reviews = [
@@ -153,7 +154,8 @@ export default function HomePage() {
   };
 
   return (
-    <div className="relative">
+    <div className="min-h-screen">
+      <MouseTrailEffect />
       <InteractiveParticles />
 
       {/* Hero Section */}
@@ -187,9 +189,8 @@ export default function HomePage() {
         </div>
       </section>
 
-
-     {/* Shop by Concern Section */}
-     <section
+      {/* Shop by Concern Section */}
+      <section
         ref={concernsRef}
         className="py-20 bg-background/50 backdrop-blur-sm"
       >
@@ -319,7 +320,6 @@ export default function HomePage() {
         </div>
       </section>
 
- 
       {/* AI Skin Analysis Section */}
       <section
         ref={aiRef}
@@ -333,7 +333,7 @@ export default function HomePage() {
             >
               <h2 className="text-3xl font-bold mb-6">AI-Powered Skin Analysis</h2>
               <p className="text-foreground/70 mb-8">
-                Get personalized skincare recommendations based on advanced AI analysis of your skin&apos;s unique characteristics.
+                Get personalized skincare recommendations based on advanced AI analysis of your skin's unique characteristics.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button size="lg" className="group">
