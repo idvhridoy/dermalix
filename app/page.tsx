@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import Image from 'next/image';
 import { InteractiveParticles } from '@/components/interactive-particles';
@@ -142,6 +142,25 @@ const reviews = [
   }
 ];
 
+const heroImages = [
+  {
+    url: 'https://images.unsplash.com/photo-1612538498456-e861df91d4d0',
+    alt: 'Luxury skincare products'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1576426863848-c21f53c60b19',
+    alt: 'Skincare routine'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1570554886111-e80fcca6a029',
+    alt: 'Natural skincare ingredients'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571',
+    alt: 'Professional skin treatment'
+  }
+];
+
 export default function HomePage() {
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
@@ -152,6 +171,7 @@ export default function HomePage() {
   const [aiRef, aiInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [reviewsRef, reviewsInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   // Auto-slide functionality
   useEffect(() => {
@@ -177,6 +197,15 @@ export default function HomePage() {
     }
   };
 
+  // Auto-slide functionality for hero section
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+    }, 5000); // Change slide every 5 seconds
+
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div className="min-h-screen">
       <MouseTrailEffect />
@@ -185,8 +214,32 @@ export default function HomePage() {
       {/* Hero Section */}
       <section 
         ref={heroRef}
-        className="min-h-[60vh] relative flex items-center overflow-hidden"
+        className="min-h-[80vh] relative flex items-center overflow-hidden"
       >
+        {/* Background Slider */}
+        <div className="absolute inset-0">
+          <AnimatePresence initial={false}>
+            <motion.div
+              key={currentSlide}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.7 }}
+              className="relative w-full h-full"
+            >
+              <Image
+                src={heroImages[currentSlide].url}
+                alt={heroImages[currentSlide].alt}
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/50 to-background/90" />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Content */}
         <div className="container mx-auto px-4 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -210,6 +263,22 @@ export default function HomePage() {
               </Button>
             </div>
           </motion.div>
+        </div>
+
+        {/* Slide Indicators */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+          {heroImages.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                currentSlide === index 
+                  ? 'w-6 bg-primary' 
+                  : 'bg-primary/30 hover:bg-primary/50'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
         </div>
       </section>
 
