@@ -180,6 +180,41 @@ export default function HomePage() {
   const [reviewsRef, reviewsInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentAnimation, setCurrentAnimation] = useState(0);
+
+  // Animation variants
+  const slideAnimations = [
+    // Zoom fade
+    {
+      initial: { opacity: 0, scale: 1.1 },
+      animate: { opacity: 1, scale: 1 },
+      exit: { opacity: 0, scale: 0.95 }
+    },
+    // Slide right
+    {
+      initial: { opacity: 0, x: -100 },
+      animate: { opacity: 1, x: 0 },
+      exit: { opacity: 0, x: 100 }
+    },
+    // Slide up
+    {
+      initial: { opacity: 0, y: 50 },
+      animate: { opacity: 1, y: 0 },
+      exit: { opacity: 0, y: -50 }
+    },
+    // Rotate zoom
+    {
+      initial: { opacity: 0, scale: 1.5, rotate: -5 },
+      animate: { opacity: 1, scale: 1, rotate: 0 },
+      exit: { opacity: 0, scale: 0.8, rotate: 5 }
+    },
+    // Fade split
+    {
+      initial: { opacity: 0, scale: 1.1, filter: "blur(10px)" },
+      animate: { opacity: 1, scale: 1, filter: "blur(0px)" },
+      exit: { opacity: 0, scale: 0.95, filter: "blur(10px)" }
+    }
+  ];
 
   // Auto-slide functionality
   useEffect(() => {
@@ -205,19 +240,21 @@ export default function HomePage() {
     }
   };
 
-  // Next slide function
+  // Next slide function with animation change
   const nextHeroSlide = () => {
+    setCurrentAnimation((prev) => (prev + 1) % slideAnimations.length);
     setCurrentSlide((prev) => (prev + 1) % heroImages.length);
   };
 
-  // Previous slide function
+  // Previous slide function with animation change
   const prevHeroSlide = () => {
+    setCurrentAnimation((prev) => (prev + 1) % slideAnimations.length);
     setCurrentSlide((prev) => (prev - 1 + heroImages.length) % heroImages.length);
   };
 
   // Auto-slide functionality for hero section
   useEffect(() => {
-    const timer = setInterval(nextHeroSlide, 5000); // Change slide every 5 seconds
+    const timer = setInterval(nextHeroSlide, 5000);
     return () => clearInterval(timer);
   }, []);
 
@@ -236,9 +273,9 @@ export default function HomePage() {
           <AnimatePresence initial={false} mode="wait">
             <motion.div
               key={currentSlide}
-              initial={{ opacity: 0, scale: 1.1 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+              initial={slideAnimations[currentAnimation].initial}
+              animate={slideAnimations[currentAnimation].animate}
+              exit={slideAnimations[currentAnimation].exit}
               transition={{ 
                 duration: 0.7,
                 ease: [0.4, 0, 0.2, 1]
@@ -252,7 +289,12 @@ export default function HomePage() {
                 className="object-cover"
                 priority
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/50 to-background/95" />
+              <motion.div 
+                className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/50 to-background/95"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              />
             </motion.div>
           </AnimatePresence>
         </div>
