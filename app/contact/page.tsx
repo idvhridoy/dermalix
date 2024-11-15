@@ -1,16 +1,9 @@
 'use client';
 
-import { useLoadScript, GoogleMap, MarkerF } from '@react-google-maps/api';
 import { ContactForm } from '@/components/contact-form';
 import { FAQSection } from '@/components/faq-section';
 
-const mapCenter = { lat: 40.7128, lng: -74.0060 }; // New York coordinates
-
 export default function ContactPage() {
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
-  });
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-primary/5">
       <div className="container mx-auto px-4 py-16 max-w-7xl">
@@ -70,28 +63,13 @@ export default function ContactPage() {
             {/* Map Section */}
             <div className="aspect-video relative overflow-hidden rounded-2xl bg-background/50 backdrop-blur-sm border border-primary/20
                          hover:shadow-lg hover:shadow-primary/20 transition-all duration-500">
-              {isLoaded ? (
-                <GoogleMap
-                  zoom={14}
-                  center={mapCenter}
-                  mapContainerClassName="w-full h-full"
-                  options={{
-                    styles: [
-                      {
-                        featureType: 'all',
-                        elementType: 'all',
-                        stylers: [{ saturation: -100 }]
-                      }
-                    ]
-                  }}
-                >
-                  <MarkerF position={mapCenter} />
-                </GoogleMap>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-foreground/80">
-                  Loading map...
-                </div>
-              )}
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.5375391157!2d90.37215181744384!3d23.738993100000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c782345c8eb9%3A0x2c3a375972e1f506!2seMartWay%20Skincare%20Limited!5e0!3m2!1sen!2sbd!4v1707922408043!5m2!1sen!2sbd"
+                className="w-full h-full border-0"
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
             </div>
           </div>
         </div>
