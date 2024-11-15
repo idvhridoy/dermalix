@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { InteractiveParticles } from '@/components/interactive-particles';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, Star, ArrowRight, Brain, Sparkles } from 'lucide-react';
+import { useState } from 'react';
 
 const categories = [
   { name: 'Cleansers', image: 'https://images.unsplash.com/photo-1556228720-195a672e8a03', href: '/products/cleansers' },
@@ -54,33 +55,51 @@ const reviews = [
   {
     name: 'Sarah M.',
     rating: 5,
-    comment: 'Amazing results! My skin has never looked better.',
+    comment: 'Amazing results! My skin has never looked better. The products are gentle yet effective.',
     image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80'
   },
   {
     name: 'Michael R.',
     rating: 5,
-    comment: 'The products are worth every penny. Seeing great improvements!',
+    comment: 'The products are worth every penny. Seeing great improvements in my skin texture and tone!',
     image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e'
   },
   {
     name: 'Emma L.',
     rating: 5,
-    comment: 'Finally found products that work for my sensitive skin.',
+    comment: 'Finally found products that work for my sensitive skin. The customer service is excellent too!',
     image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb'
+  },
+  {
+    name: 'David W.',
+    rating: 5,
+    comment: 'The anti-aging serum is a game changer. I can see visible results in just a few weeks.',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d'
+  },
+  {
+    name: 'Jessica H.',
+    rating: 5,
+    comment: 'Love how my skin feels after using these products. The brightening serum is my favorite!',
+    image: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04'
+  },
+  {
+    name: 'Robert K.',
+    rating: 5,
+    comment: 'Great natural ingredients and the results speak for themselves. Highly recommended!',
+    image: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce'
   }
 ];
 
 export default function HomePage() {
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-
   const [heroRef, heroInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [categoriesRef, categoriesInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [productsRef, productsInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [concernsRef, concernsInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [aiRef, aiInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [reviewsRef, reviewsInView] = useInView({ triggerOnce: true, threshold: 0.1 });
+  const [currentReview, setCurrentReview] = useState(0);
 
   return (
     <div className="relative">
@@ -293,7 +312,7 @@ export default function HomePage() {
       {/* Reviews Section */}
       <section
         ref={reviewsRef}
-        className="py-20 bg-background/50 backdrop-blur-sm"
+        className="py-20 bg-background/50 backdrop-blur-sm overflow-hidden"
       >
         <div className="container mx-auto px-4">
           <motion.div
@@ -305,36 +324,80 @@ export default function HomePage() {
             <p className="text-foreground/70">Real results from real people</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {reviews.map((review, index) => (
-              <motion.div
-                key={review.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={reviewsInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: index * 0.1 }}
-                className="bg-background/80 backdrop-blur-sm p-6 rounded-2xl border border-primary/10"
-              >
-                <div className="flex items-center mb-4">
-                  <div className="relative w-12 h-12 rounded-full overflow-hidden mr-4">
-                    <Image
-                      src={review.image}
-                      alt={review.name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">{review.name}</h3>
-                    <div className="flex">
-                      {Array.from({ length: review.rating }).map((_, i) => (
-                        <Star key={i} className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                      ))}
+          <div className="relative">
+            <motion.div
+              className="flex transition-all duration-500 ease-in-out"
+              animate={{
+                x: `${-currentReview * 100}%`
+              }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            >
+              {reviews.map((review, index) => (
+                <motion.div
+                  key={review.name}
+                  className="w-full md:w-1/3 flex-shrink-0 px-4"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={reviewsInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <div className="bg-background/80 backdrop-blur-sm p-6 rounded-2xl border border-primary/10 h-full">
+                    <div className="flex items-center mb-4">
+                      <div className="relative w-12 h-12 rounded-full overflow-hidden mr-4">
+                        <Image
+                          src={review.image}
+                          alt={review.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">{review.name}</h3>
+                        <div className="flex">
+                          {Array.from({ length: review.rating }).map((_, i) => (
+                            <Star key={i} className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+                          ))}
+                        </div>
+                      </div>
                     </div>
+                    <p className="text-foreground/70">{review.comment}</p>
                   </div>
-                </div>
-                <p className="text-foreground/70">{review.comment}</p>
-              </motion.div>
-            ))}
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Navigation Dots */}
+            <div className="flex justify-center mt-8 gap-2">
+              {reviews.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentReview(index)}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    currentReview === index 
+                      ? 'bg-primary w-4' 
+                      : 'bg-primary/30 hover:bg-primary/50'
+                  }`}
+                  aria-label={`Go to review ${index + 1}`}
+                />
+              ))}
+            </div>
+
+            {/* Navigation Buttons */}
+            <button
+              onClick={() => setCurrentReview(prev => Math.max(0, prev - 1))}
+              className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 border border-primary/20 
+                       hover:bg-background hover:border-primary/40 transition-all duration-300"
+              disabled={currentReview === 0}
+            >
+              <ChevronRight className="w-5 h-5 rotate-180" />
+            </button>
+            <button
+              onClick={() => setCurrentReview(prev => Math.min(reviews.length - 3, prev + 1))}
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 border border-primary/20 
+                       hover:bg-background hover:border-primary/40 transition-all duration-300"
+              disabled={currentReview >= reviews.length - 3}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </section>
