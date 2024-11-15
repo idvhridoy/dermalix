@@ -144,7 +144,7 @@ const reviews = [
 
 const heroImages = [
   {
-    url: 'https://images.unsplash.com/photo-1621798744997-3c56ee0d54b7',
+    url: 'https://images.unsplash.com/photo-1601412436009-d964bd02edbc',
     alt: 'Woman with glowing skin close-up'
   },
   {
