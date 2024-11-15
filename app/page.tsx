@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { InteractiveParticles } from '@/components/interactive-particles';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, Star, ArrowRight, Brain, Sparkles } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const categories = [
   { name: 'Cleansers', image: 'https://images.unsplash.com/photo-1556228720-195a672e8a03', href: '/products/cleansers' },
@@ -99,7 +99,24 @@ export default function HomePage() {
   const [concernsRef, concernsInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [aiRef, aiInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [reviewsRef, reviewsInView] = useInView({ triggerOnce: true, threshold: 0.1 });
-  const [currentReview, setCurrentReview] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Auto-slide functionality
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev >= reviews.length - 3 ? 0 : prev + 1));
+    }, 4000); // Change slide every 4 seconds
+
+    return () => clearInterval(timer);
+  }, [reviews.length]);
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev >= reviews.length - 3 ? 0 : prev + 1));
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev === 0 ? reviews.length - 3 : prev - 1));
+  };
 
   return (
     <div className="relative">
@@ -328,7 +345,7 @@ export default function HomePage() {
             <motion.div
               className="flex transition-all duration-500 ease-in-out"
               animate={{
-                x: `${-currentReview * 100}%`
+                x: `${-currentIndex * 100}%`
               }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
             >
@@ -370,9 +387,9 @@ export default function HomePage() {
               {reviews.map((_, index) => (
                 <button
                   key={index}
-                  onClick={() => setCurrentReview(index)}
+                  onClick={() => setCurrentIndex(index)}
                   className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    currentReview === index 
+                    currentIndex === index 
                       ? 'bg-primary w-4' 
                       : 'bg-primary/30 hover:bg-primary/50'
                   }`}
@@ -383,18 +400,18 @@ export default function HomePage() {
 
             {/* Navigation Buttons */}
             <button
-              onClick={() => setCurrentReview(prev => Math.max(0, prev - 1))}
+              onClick={prevSlide}
               className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 border border-primary/20 
                        hover:bg-background hover:border-primary/40 transition-all duration-300"
-              disabled={currentReview === 0}
+              disabled={currentIndex === 0}
             >
               <ChevronRight className="w-5 h-5 rotate-180" />
             </button>
             <button
-              onClick={() => setCurrentReview(prev => Math.min(reviews.length - 3, prev + 1))}
+              onClick={nextSlide}
               className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 border border-primary/20 
                        hover:bg-background hover:border-primary/40 transition-all duration-300"
-              disabled={currentReview >= reviews.length - 3}
+              disabled={currentIndex >= reviews.length - 3}
             >
               <ChevronRight className="w-5 h-5" />
             </button>
