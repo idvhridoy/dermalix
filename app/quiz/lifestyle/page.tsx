@@ -14,6 +14,7 @@ import {
   Coffee as CoffeeIcon 
 } from 'lucide-react';
 import { Heart } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const lifestyleQuestions = {
   sleep: [
@@ -111,6 +112,7 @@ export default function LifestyleQuizPage() {
   const [answers, setAnswers] = useState<Record<string, string[]>>({});
   const [showResult, setShowResult] = useState(false);
   const [progress, setProgress] = useState(0);
+  const router = useRouter();
 
   const totalQuestions = Object.values(lifestyleQuestions).flat().length;
 
@@ -306,6 +308,7 @@ export default function LifestyleQuizPage() {
                 <Button
                   size="lg"
                   className="gap-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                  onClick={() => router.push('/quiz')}
                 >
                   View All Quizzes
                   <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
