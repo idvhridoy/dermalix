@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowRight, ArrowLeft, Beaker } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const ingredientQuestions = [
   {
@@ -40,6 +41,7 @@ const ingredientQuestions = [
 ];
 
 export default function IngredientsQuiz() {
+  const router = useRouter();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [showScore, setShowScore] = useState(false);
@@ -181,6 +183,7 @@ export default function IngredientsQuiz() {
                 <Button
                   size="lg"
                   className="gap-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                  onClick={() => router.push('/quiz')}
                 >
                   View All Quizzes
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
