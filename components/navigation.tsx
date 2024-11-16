@@ -234,11 +234,11 @@ export function Navigation() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <Image 
-              src="/logo.svg" 
+              src="https://images.unsplash.com/photo-1556228720-195a672e8a03" 
               alt="Dermalix Logo" 
               width={40} 
               height={40} 
-              className="w-10 h-10"
+              className="w-10 h-10 rounded-full object-cover"
             />
             <span className="text-xl font-bold text-foreground">Dermalix</span>
           </Link>

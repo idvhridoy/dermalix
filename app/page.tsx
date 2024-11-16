@@ -165,7 +165,7 @@ const heroImages = [
     alt: 'Natural skincare ingredients'
   },
   {
-    url: 'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c',
+    url: 'https://images.unsplash.com/photo-1512290923902-8a1dd7228f2d',
     alt: 'Woman with radiant skin'
   }
 ];
@@ -267,7 +267,7 @@ export default function HomePage() {
       {/* Hero Section */}
       <section 
         ref={heroRef}
-        className="min-h-[70vh] relative flex items-center overflow-hidden"
+        className="min-h-[70vh] relative flex items-center overflow-hidden pt-20"
       >
         {/* Background Slider */}
         <div className="absolute inset-0">
@@ -308,21 +308,21 @@ export default function HomePage() {
             transition={{ duration: 0.8 }}
             className="max-w-4xl mx-auto text-center"
           >
-            <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary">
+            <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary">
               Transform Your Skin
             </h1>
-            <p className="text-xl md:text-2xl text-foreground/80 mb-8">
+            <p className="text-lg sm:text-xl md:text-2xl text-foreground/80 mb-8">
               Advanced skincare solutions backed by science
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/products">
-                <Button size="lg" className="group">
+              <Link href="/products" className="w-full sm:w-auto">
+                <Button size="lg" className="group w-full">
                   Shop Now
                   <ChevronRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Link href="/quiz">
-                <Button size="lg" variant="outline">
+              <Link href="/quiz" className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="w-full">
                   Take Skin Quiz
                 </Button>
               </Link>
@@ -382,16 +382,16 @@ export default function HomePage() {
             <p className="text-foreground/70">Target your specific skincare needs</p>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {concerns.map((concern, index) => (
               <motion.div
                 key={concern.name}
                 initial={{ opacity: 0, y: 20 }}
                 animate={concernsInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: index * 0.1 }}
-                className="group relative p-6 rounded-2xl border border-primary/10 hover:border-primary/30 transition-colors overflow-hidden"
+                className="group relative p-4 sm:p-6 rounded-2xl border border-primary/10 hover:border-primary/30 transition-colors overflow-hidden"
               >
-                <div className="relative w-full h-32 mb-4 rounded-lg overflow-hidden">
+                <div className="relative w-full h-24 sm:h-32 mb-4 rounded-lg overflow-hidden">
                   <Image
                     src={concern.image}
                     alt={concern.name}
@@ -399,9 +399,9 @@ export default function HomePage() {
                     className="object-cover transition-transform duration-300 group-hover:scale-110"
                   />
                 </div>
-                <h3 className="text-lg font-medium mb-2 text-center">{concern.name}</h3>
+                <h3 className="text-base sm:text-lg font-medium mb-2 text-center">{concern.name}</h3>
                 <Link href={concern.href}>
-                  <Button variant="ghost" className="w-full group-hover:text-primary">
+                  <Button variant="ghost" className="w-full group-hover:text-primary text-xs sm:text-sm">
                     Learn More
                   </Button>
                 </Link>
@@ -426,7 +426,7 @@ export default function HomePage() {
             <p className="text-foreground/70">Find the perfect products for your skincare routine</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {categories.map((category, index) => (
               <motion.div
                 key={category.name}
@@ -435,7 +435,7 @@ export default function HomePage() {
                 transition={{ delay: index * 0.1 }}
                 className="group relative overflow-hidden rounded-2xl"
               >
-                <div className="relative h-80">
+                <div className="relative h-48 sm:h-64 lg:h-80">
                   <Image
                     src={category.image}
                     alt={category.name}
@@ -443,11 +443,11 @@ export default function HomePage() {
                     className="object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
-                  <div className="absolute bottom-6 left-6">
-                    <h3 className="text-2xl font-semibold text-white mb-2">{category.name}</h3>
+                  <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6">
+                    <h3 className="text-xl sm:text-2xl font-semibold text-white mb-2">{category.name}</h3>
                     <Link href={category.href}>
-                      <Button variant="ghost" className="text-white group-hover:translate-x-2 transition-transform">
-                        Shop Now <ArrowRight className="ml-2 h-4 w-4" />
+                      <Button variant="ghost" className="text-white group-hover:translate-x-2 transition-transform text-sm sm:text-base">
+                        Shop Now <ArrowRight className="ml-2 h-3 w-3 sm:h-4 sm:w-4" />
                       </Button>
                     </Link>
                   </div>
@@ -568,25 +568,25 @@ export default function HomePage() {
             <p className="text-foreground/70">Real results from real people</p>
           </motion.div>
 
-          <div className="relative">
+          <div className="relative overflow-x-hidden">
             <motion.div
               className="flex transition-all duration-500 ease-in-out"
               animate={{
-                x: `${-currentIndex * 33.333}%`
+                x: `${-currentIndex * (window.innerWidth < 640 ? 100 : 33.333)}%`
               }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
             >
               {reviews.map((review, index) => (
                 <motion.div
                   key={review.name}
-                  className="w-1/3 flex-shrink-0 px-4"
+                  className="w-full sm:w-1/3 flex-shrink-0 px-2 sm:px-4"
                   initial={{ opacity: 0, y: 20 }}
                   animate={reviewsInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <div className="bg-background/80 backdrop-blur-sm p-6 rounded-2xl border border-primary/10 h-full">
+                  <div className="bg-background/80 backdrop-blur-sm p-4 sm:p-6 rounded-2xl border border-primary/10 h-full">
                     <div className="flex items-center mb-4">
-                      <div className="relative w-12 h-12 rounded-full overflow-hidden mr-4">
+                      <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden mr-3 sm:mr-4">
                         <Image
                           src={review.image}
                           alt={review.name}
@@ -595,23 +595,23 @@ export default function HomePage() {
                         />
                       </div>
                       <div>
-                        <h3 className="font-semibold">{review.name}</h3>
-                        <p className="text-sm text-muted-foreground">{review.role}</p>
+                        <h3 className="text-sm sm:text-base font-semibold">{review.name}</h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground">{review.role}</p>
                         <div className="flex">
                           {Array.from({ length: review.rating }).map((_, i) => (
-                            <Star key={i} className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+                            <Star key={i} className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-400 fill-yellow-400" />
                           ))}
                         </div>
                       </div>
                     </div>
-                    <p className="text-foreground/70">{review.review}</p>
+                    <p className="text-xs sm:text-sm text-foreground/70">{review.review}</p>
                   </div>
                 </motion.div>
               ))}
             </motion.div>
 
             {/* Navigation Dots */}
-            <div className="flex justify-center mt-8 gap-2">
+            <div className="flex justify-center mt-6 gap-2">
               {[0, 1, 2].map((index) => (
                 <button
                   key={index}
@@ -629,7 +629,7 @@ export default function HomePage() {
             {/* Navigation Buttons */}
             <button
               onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 border border-primary/20 
+              className="hidden sm:block absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 border border-primary/20 
                        hover:bg-background hover:border-primary/40 transition-all duration-300"
               disabled={currentIndex === 0}
             >
@@ -637,7 +637,7 @@ export default function HomePage() {
             </button>
             <button
               onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 border border-primary/20 
+              className="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 border border-primary/20 
                        hover:bg-background hover:border-primary/40 transition-all duration-300"
               disabled={currentIndex >= 6}
             >
