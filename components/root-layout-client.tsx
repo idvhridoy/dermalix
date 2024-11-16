@@ -4,11 +4,10 @@ import { Inter } from 'next/font/google';
 import { Navigation } from './navigation';
 import { Footer } from './footer';
 import { ThemeProvider } from './theme-provider';
-import { VisitorStats } from './visitor-stats';
-import { AnnouncementSlider } from './announcement-slider';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useLayoutEffect } from 'react';
+import { VisitorStats } from './visitor-stats';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -89,7 +88,6 @@ export function RootLayoutClient({
         {/* Main Content */}
         <div className="relative z-10 min-h-screen flex flex-col">
           <Navigation />
-          <AnnouncementSlider />
           
           {/* Page Content with Transitions */}
           <main className="flex-grow container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 max-w-7xl">

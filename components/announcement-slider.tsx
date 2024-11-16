@@ -8,22 +8,22 @@ import { SkincareParticles } from './skincare-particles';
 const announcements = [
   {
     id: 1,
-    text: "🌟 New Arrival: Advanced Anti-Aging Serum - Shop Now!",
+    text: " New Arrival: Advanced Anti-Aging Serum - Shop Now!",
     link: "/products/anti-aging-serum"
   },
   {
     id: 2,
-    text: "✨ Free Shipping on Orders Over $50",
+    text: " Free Shipping on Orders Over $50",
     link: "/shipping"
   },
   {
     id: 3,
-    text: "🎁 Get 20% Off Your First Purchase - Use Code: WELCOME20",
+    text: " Get 20% Off Your First Purchase - Use Code: WELCOME20",
     link: "/offers"
   },
   {
     id: 4,
-    text: "💫 Join Our Loyalty Program for Exclusive Benefits",
+    text: " Join Our Loyalty Program for Exclusive Benefits",
     link: "/loyalty"
   }
 ];
@@ -48,10 +48,10 @@ export function AnnouncementSlider() {
   if (!isVisible) return null;
 
   return (
-    <div className="relative bg-gradient-to-r from-primary/5 via-background to-primary/5 backdrop-blur-sm border-b border-primary/20 overflow-hidden">
+    <div className="relative bg-gradient-to-r from-primary/5 via-background to-primary/5 backdrop-blur-sm border-b border-primary/20 overflow-hidden z-0">
       <SkincareParticles />
       <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 max-w-7xl relative">
-        <div className="h-12 relative overflow-hidden">
+        <div className="h-14 relative overflow-hidden flex items-center justify-center">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentSlide}
@@ -59,11 +59,11 @@ export function AnnouncementSlider() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -50, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="absolute inset-0 flex items-center justify-center z-10"
+              className="absolute inset-0 flex items-center justify-center z-10 px-12"
             >
               <a 
                 href={announcements[currentSlide].link}
-                className="text-sm sm:text-base text-center hover:text-primary transition-colors duration-300"
+                className="text-sm sm:text-base text-center hover:text-primary transition-colors duration-300 truncate max-w-full"
               >
                 {announcements[currentSlide].text}
               </a>

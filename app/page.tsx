@@ -95,7 +95,7 @@ const reviews = [
   {
     name: "Emma Thompson",
     role: "Beauty Blogger",
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb",
+    image: "https://images.unsplash.com/photo-1534528741775-98c74b5b159f",
     review: "I've tried countless skincare products, but Dermalix stands out. Their natural ingredients and scientific approach really deliver results.",
     rating: 5
   },
@@ -263,7 +263,7 @@ export default function HomePage() {
     <div className="min-h-screen">
       <MouseTrailEffect />
       <InteractiveParticles />
-
+      
       {/* Hero Section */}
       <section 
         ref={heroRef}
@@ -382,7 +382,7 @@ export default function HomePage() {
             <p className="text-foreground/70">Target your specific skincare needs</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 sm:gap-6">
             {concerns.map((concern, index) => (
               <motion.div
                 key={concern.name}
