@@ -14,7 +14,9 @@ import {
   Trophy,
   Award,
   Medal,
-  Star
+  Star,
+  Menu,
+  X
 } from 'lucide-react';
 
 const quizzes = [
@@ -133,19 +135,115 @@ export default function QuizPage() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [showResult, setShowResult] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleQuizSelect = (quiz) => {
     window.location.href = quiz.href;
   };
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
-    <div className="min-h-screen bg-black text-white p-6">
-      <div className="container mx-auto">
-        <h1 className="text-4xl font-bold mb-8 text-center bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+    <div className="min-h-screen bg-black text-white relative">
+      {/* Floating Mobile Menu Button */}
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        onClick={toggleSidebar}
+        className={`
+          fixed top-4 right-4 z-50 
+          lg:hidden 
+          bg-background/80 backdrop-blur-md 
+          hover:bg-primary/10 
+          w-12 h-12 rounded-full 
+          shadow-lg 
+          transition-all duration-300
+          ${isSidebarOpen ? 'rotate-90' : ''}
+        `}
+      >
+        {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+      </Button>
+
+      {/* Mobile Sidebar Overlay */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-background/95 backdrop-blur-md z-40 lg:hidden overflow-y-auto"
+          >
+            <div className="container mx-auto px-4 py-8 mt-16">
+              <div className="space-y-4">
+                <h2 className="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                  Dermalix Quizzes
+                </h2>
+                
+                {quizzes.map((quiz, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ 
+                      delay: index * 0.1,
+                      duration: 0.3
+                    }}
+                    className={`
+                      bg-gray-900 rounded-xl p-4 
+                      border border-transparent 
+                      hover:border-purple-500 
+                      transition-all duration-300 
+                      cursor-pointer 
+                      group
+                      relative
+                      overflow-hidden
+                      w-full
+                      transform hover:scale-105 active:scale-95
+                    `}
+                    onClick={() => {
+                      handleQuizSelect(quiz);
+                      toggleSidebar();
+                    }}
+                  >
+                    <div 
+                      className={`
+                        absolute inset-0 
+                        opacity-20 
+                        group-hover:opacity-30 
+                        transition-opacity 
+                        duration-300 
+                        ${quiz.gradient}
+                      `}
+                    />
+                    
+                    <div className="relative z-10 flex items-center">
+                      <quiz.icon className="w-8 h-8 mr-3 text-purple-400 group-hover:text-purple-300 transition-colors" />
+                      <div>
+                        <h3 className="text-lg font-bold text-white group-hover:text-purple-200 transition-colors">
+                          {quiz.title}
+                        </h3>
+                        <p className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors">
+                          {quiz.description}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Main Content Area - Full width */}
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-center bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
           Dermalix Quizzes
         </h1>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {quizzes.map((quiz, index) => (
             <motion.div
               key={index}
@@ -156,7 +254,7 @@ export default function QuizPage() {
                 duration: 0.3
               }}
               className={`
-                bg-gray-900 rounded-xl p-6 
+                bg-gray-900 rounded-xl p-4 sm:p-6 
                 border border-transparent 
                 hover:border-purple-500 
                 transition-all duration-300 
@@ -164,13 +262,10 @@ export default function QuizPage() {
                 group
                 relative
                 overflow-hidden
+                w-full
+                transform hover:scale-105 active:scale-95
               `}
               onClick={() => handleQuizSelect(quiz)}
-              whileHover={{ 
-                scale: 1.05,
-                transition: { duration: 0.2 }
-              }}
-              whileTap={{ scale: 0.95 }}
             >
               {/* Gradient Background */}
               <div 
@@ -185,21 +280,21 @@ export default function QuizPage() {
               />
               
               {/* Quiz Card Content */}
-              <div className="relative z-10">
-                <div className="flex items-center mb-4">
-                  <quiz.icon className="w-10 h-10 mr-4 text-purple-400 group-hover:text-purple-300 transition-colors" />
-                  <h2 className="text-2xl font-bold text-white group-hover:text-purple-200 transition-colors">
+              <div className="relative z-10 flex flex-col h-full">
+                <div className="flex items-center mb-2 sm:mb-4">
+                  <quiz.icon className="w-8 h-8 sm:w-10 sm:h-10 mr-3 text-purple-400 group-hover:text-purple-300 transition-colors" />
+                  <h2 className="text-lg sm:text-2xl font-bold text-white group-hover:text-purple-200 transition-colors">
                     {quiz.title}
                   </h2>
                 </div>
                 
-                <p className="text-gray-400 group-hover:text-gray-300 transition-colors mb-4">
+                <p className="text-sm sm:text-base text-gray-400 group-hover:text-gray-300 transition-colors mb-3 sm:mb-4 flex-grow">
                   {quiz.description}
                 </p>
                 
-                <div className="flex items-center text-purple-400 group-hover:text-purple-300 transition-colors">
+                <div className="flex items-center text-purple-400 group-hover:text-purple-300 transition-colors text-sm sm:text-base">
                   <span className="mr-2">Start Quiz</span>
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             </motion.div>

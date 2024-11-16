@@ -9,6 +9,7 @@ import {
   ArrowLeft as ArrowLeftIcon, 
   Sparkles as SparklesIcon
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const routineQuestions = [
   {
@@ -47,6 +48,7 @@ export default function RoutineQuiz() {
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
   const [quizComplete, setQuizComplete] = useState(false);
   const [progress, setProgress] = useState(0);
+  const router = useRouter();
 
   const handleAnswerClick = (selectedOption: string) => {
     const newSelectedAnswers = [...selectedAnswers, selectedOption];
@@ -211,21 +213,18 @@ export default function RoutineQuiz() {
               </div>
 
               <div className="mt-8 flex justify-center gap-4">
-                <Button
-                  onClick={restartQuiz}
-                  size="lg"
-                  variant="outline"
-                  className="gap-2"
+                <Button 
+                  variant="outline" 
+                  className="bg-gray-800 hover:bg-gray-700 text-white"
+                  onClick={() => router.push('/quiz')}
                 >
-                  <ArrowRightIcon className="w-4 h-4 rotate-180" />
-                  Restart Quiz
+                  <ArrowLeftIcon className="mr-2" /> Back to Quizzes
                 </Button>
-                <Button
-                  size="lg"
-                  className="gap-2"
+                <Button 
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                  onClick={() => window.location.reload()}
                 >
-                  View All Quizzes
-                  <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  Retake Quiz
                 </Button>
               </div>
             </div>

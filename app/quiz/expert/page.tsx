@@ -9,6 +9,7 @@ import {
   ArrowLeft as ArrowLeftIcon, 
   GraduationCap as GraduationCapIcon
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const expertQuestions = [
   {
@@ -55,9 +56,10 @@ const expertQuestions = [
 
 export default function ExpertQuiz() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
   const [score, setScore] = useState(0);
-  const [showScore, setShowScore] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [quizComplete, setQuizComplete] = useState(false);
+  const router = useRouter();
 
   const handleAnswerClick = (selectedAnswer: number) => {
     if (selectedAnswer === expertQuestions[currentQuestion].correctAnswer) {
@@ -68,23 +70,24 @@ export default function ExpertQuiz() {
     if (nextQuestion < expertQuestions.length) {
       setCurrentQuestion(nextQuestion);
     } else {
-      setShowScore(true);
+      setQuizComplete(true);
     }
     
-    setProgress(((nextQuestion) / expertQuestions.length) * 100);
+    const progress = ((nextQuestion) / expertQuestions.length) * 100;
+    setSelectedAnswers([...selectedAnswers, expertQuestions[currentQuestion].options[selectedAnswer]]);
   };
 
   const restartQuiz = () => {
     setCurrentQuestion(0);
     setScore(0);
-    setShowScore(false);
-    setProgress(0);
+    setQuizComplete(false);
+    setSelectedAnswers([]);
   };
 
   const goBack = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion(prev => prev - 1);
-      setProgress(((currentQuestion - 1) / expertQuestions.length) * 100);
+      const progress = ((currentQuestion - 1) / expertQuestions.length) * 100;
     }
   };
 
@@ -97,7 +100,7 @@ export default function ExpertQuiz() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        {!showScore ? (
+        {!quizComplete ? (
           <div className="max-w-2xl mx-auto">
             <div className="mb-8">
               <div className="flex items-center justify-between mb-4">
@@ -118,9 +121,9 @@ export default function ExpertQuiz() {
                   </Button>
                 )}
               </div>
-              <Progress value={progress} className="h-2" />
+              <Progress value={((currentQuestion + 1) / expertQuestions.length) * 100} className="h-2" />
               <p className="text-center mt-2 text-muted-foreground">
-                {Math.round(progress)}% Complete
+                {Math.round(((currentQuestion + 1) / expertQuestions.length) * 100)}% Complete
               </p>
             </div>
 
@@ -185,21 +188,18 @@ export default function ExpertQuiz() {
               </div>
 
               <div className="mt-8 flex justify-center gap-4">
-                <Button
-                  onClick={restartQuiz}
-                  size="lg"
-                  variant="outline"
-                  className="gap-2"
+                <Button 
+                  variant="outline" 
+                  className="bg-gray-800 hover:bg-gray-700 text-white"
+                  onClick={() => router.push('/quiz')}
                 >
-                  <ArrowRightIcon className="w-4 h-4 rotate-180" />
-                  Restart Quiz
+                  <ArrowLeftIcon className="mr-2" /> Back to Quizzes
                 </Button>
-                <Button
-                  size="lg"
-                  className="gap-2"
+                <Button 
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                  onClick={() => window.location.reload()}
                 >
-                  View All Quizzes
-                  <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  Retake Quiz
                 </Button>
               </div>
             </div>

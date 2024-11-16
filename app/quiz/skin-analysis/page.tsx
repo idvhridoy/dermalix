@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Beaker, ArrowRight, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const skinAnalysisQuestions = [
   {
@@ -41,6 +41,7 @@ export default function SkinAnalysisQuiz() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
   const [showResult, setShowResult] = useState(false);
+  const router = useRouter();
 
   const handleAnswer = (answerType: string) => {
     const newAnswers = [...answers, answerType];
@@ -228,11 +229,13 @@ export default function SkinAnalysisQuiz() {
                   </ul>
                   
                   <div className="flex justify-center space-x-4">
-                    <Link href="/quiz">
-                      <Button variant="outline" className="bg-gray-800 hover:bg-gray-700 text-white">
-                        <ArrowLeft className="mr-2" /> Back to Quizzes
-                      </Button>
-                    </Link>
+                    <Button 
+                      variant="outline" 
+                      className="bg-gray-800 hover:bg-gray-700 text-white"
+                      onClick={() => router.push('/quiz')}
+                    >
+                      <ArrowLeft className="mr-2" /> Back to Quizzes
+                    </Button>
                     <Button 
                       className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
                       onClick={() => window.location.reload()}
