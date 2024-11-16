@@ -13,7 +13,8 @@ import {
   ArrowLeft,
   Trophy,
   Award,
-  Medal
+  Medal,
+  Star
 } from 'lucide-react';
 
 const quizzes = [
@@ -45,11 +46,38 @@ const quizzes = [
     ]
   },
   {
+    title: 'Skin Analysis Quiz',
+    description: 'Discover your unique skin type and characteristics',
+    icon: Beaker,
+    href: '/quiz/skin-analysis',
+    gradient: 'from-blue-500 to-purple-500',
+    questions: [
+      {
+        question: 'How does your skin feel after cleansing?',
+        options: [
+          { text: 'Tight and dry', type: 'Dry' },
+          { text: 'Normal and balanced', type: 'Normal' },
+          { text: 'Oily, especially in T-zone', type: 'Combination' },
+          { text: 'Very oily all over', type: 'Oily' }
+        ]
+      },
+      {
+        question: 'How often does your skin get shiny throughout the day?',
+        options: [
+          { text: 'Never', type: 'Dry' },
+          { text: 'Rarely', type: 'Normal' },
+          { text: 'Only in T-zone', type: 'Combination' },
+          { text: 'Very often', type: 'Oily' }
+        ]
+      }
+    ]
+  },
+  {
     title: 'Ingredients Knowledge',
     description: 'Test your understanding of skincare ingredients',
     icon: Beaker,
     href: '/quiz/ingredients',
-    gradient: 'from-blue-500 to-purple-500',
+    gradient: 'from-teal-500 to-green-500',
     questions: [
       {
         question: 'What does Hyaluronic Acid do?',
@@ -67,14 +95,36 @@ const quizzes = [
     description: 'Create your perfect skincare routine',
     icon: Sparkles,
     href: '/quiz/routine',
-    gradient: 'from-amber-500 to-orange-500'
+    gradient: 'from-amber-500 to-orange-500',
+    questions: [
+      {
+        question: 'What is your skin type?',
+        options: [
+          { text: 'Dry', type: 'Dry' },
+          { text: 'Normal', type: 'Normal' },
+          { text: 'Combination', type: 'Combination' },
+          { text: 'Oily', type: 'Oily' }
+        ]
+      }
+    ]
   },
   {
     title: 'Expert Level',
     description: 'Advanced skincare science and techniques',
     icon: GraduationCap,
     href: '/quiz/expert',
-    gradient: 'from-emerald-500 to-teal-500'
+    gradient: 'from-emerald-500 to-teal-500',
+    questions: [
+      {
+        question: 'What is the primary function of the skin\'s barrier function?',
+        options: [
+          { text: 'To regulate body temperature', type: 'Wrong' },
+          { text: 'To protect against external factors', type: 'Correct' },
+          { text: 'To aid in the production of vitamin D', type: 'Wrong' },
+          { text: 'To facilitate the removal of waste products', type: 'Wrong' }
+        ]
+      }
+    ]
   }
 ];
 
@@ -85,175 +135,76 @@ export default function QuizPage() {
   const [showResult, setShowResult] = useState(false);
 
   const handleQuizSelect = (quiz) => {
-    setSelectedQuiz(quiz);
-    setCurrentQuestion(0);
-    setAnswers([]);
-    setShowResult(false);
+    window.location.href = quiz.href;
   };
-
-  const handleAnswer = (answer) => {
-    const newAnswers = [...answers, answer];
-    setAnswers(newAnswers);
-
-    if (currentQuestion < selectedQuiz.questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else {
-      setShowResult(true);
-    }
-  };
-
-  const progress = selectedQuiz 
-    ? ((currentQuestion + 1) / selectedQuiz.questions.length) * 100 
-    : 0;
-
-  if (!selectedQuiz) {
-    return (
-      <div className="min-h-screen bg-black text-white">
-        <div className="container mx-auto px-4 py-16">
-          <div className="text-center mb-16">
-            <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 text-transparent bg-clip-text">
-              Skincare Quizzes
-            </h1>
-            <p className="text-xl text-zinc-400">
-              Test your knowledge and get personalized recommendations
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            {quizzes.map((quiz, index) => (
-              <motion.div
-                key={quiz.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="group"
-                onClick={() => handleQuizSelect(quiz)}
-              >
-                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 h-full transition-all duration-300 hover:bg-zinc-900/50 hover:border-zinc-700 cursor-pointer">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className={`p-3 rounded-lg bg-gradient-to-br ${quiz.gradient} bg-opacity-10`}>
-                      <quiz.icon className="w-6 h-6 text-white" />
-                    </div>
-                    <h2 className="text-2xl font-semibold">{quiz.title}</h2>
-                  </div>
-                  <p className="text-zinc-400 mb-6">
-                    {quiz.description}
-                  </p>
-                  <div className="flex items-center text-zinc-300 group-hover:text-white transition-colors">
-                    <span className="mr-2">Start Quiz</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="container mx-auto px-4 py-16">
-        {!showResult ? (
-          <div className="max-w-2xl mx-auto">
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-4">
-                <Button
-                  variant="ghost"
-                  className="text-zinc-400 hover:text-white"
-                  onClick={() => setSelectedQuiz(null)}
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Quizzes
-                </Button>
-                <div className="flex items-center gap-2">
-                  <div className={`p-2 rounded-lg bg-gradient-to-br ${selectedQuiz.gradient} bg-opacity-10`}>
-                    <selectedQuiz.icon className="w-5 h-5 text-white" />
-                  </div>
-                  <h2 className="text-xl font-semibold">{selectedQuiz.title}</h2>
+    <div className="min-h-screen bg-black text-white p-6">
+      <div className="container mx-auto">
+        <h1 className="text-4xl font-bold mb-8 text-center bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+          Dermalix Quizzes
+        </h1>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {quizzes.map((quiz, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ 
+                delay: index * 0.1,
+                duration: 0.3
+              }}
+              className={`
+                bg-gray-900 rounded-xl p-6 
+                border border-transparent 
+                hover:border-purple-500 
+                transition-all duration-300 
+                cursor-pointer 
+                group
+                relative
+                overflow-hidden
+              `}
+              onClick={() => handleQuizSelect(quiz)}
+              whileHover={{ 
+                scale: 1.05,
+                transition: { duration: 0.2 }
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {/* Gradient Background */}
+              <div 
+                className={`
+                  absolute inset-0 
+                  opacity-20 
+                  group-hover:opacity-30 
+                  transition-opacity 
+                  duration-300 
+                  ${quiz.gradient}
+                `}
+              />
+              
+              {/* Quiz Card Content */}
+              <div className="relative z-10">
+                <div className="flex items-center mb-4">
+                  <quiz.icon className="w-10 h-10 mr-4 text-purple-400 group-hover:text-purple-300 transition-colors" />
+                  <h2 className="text-2xl font-bold text-white group-hover:text-purple-200 transition-colors">
+                    {quiz.title}
+                  </h2>
+                </div>
+                
+                <p className="text-gray-400 group-hover:text-gray-300 transition-colors mb-4">
+                  {quiz.description}
+                </p>
+                
+                <div className="flex items-center text-purple-400 group-hover:text-purple-300 transition-colors">
+                  <span className="mr-2">Start Quiz</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
-              <Progress value={progress} className="h-2 bg-zinc-800" />
-              <p className="text-center mt-2 text-zinc-400">
-                Question {currentQuestion + 1} of {selectedQuiz.questions.length}
-              </p>
-            </div>
-
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8">
-              <h3 className="text-xl font-semibold mb-6">
-                {selectedQuiz.questions[currentQuestion].question}
-              </h3>
-              <div className="space-y-4">
-                {selectedQuiz.questions[currentQuestion].options.map((option, index) => (
-                  <motion.div
-                    key={option.text}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <Button
-                      variant="outline"
-                      className="w-full text-left justify-start h-auto py-4 px-6 bg-zinc-900 border-zinc-700 hover:bg-zinc-800"
-                      onClick={() => handleAnswer(option.type)}
-                    >
-                      {option.text}
-                    </Button>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-4xl mx-auto bg-zinc-900 border border-zinc-800 rounded-xl p-8"
-          >
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 text-transparent bg-clip-text">
-                Quiz Results
-              </h2>
-              <div className="flex justify-center gap-4">
-                <Trophy className="w-8 h-8 text-white" />
-                <Award className="w-8 h-8 text-white" />
-                <Medal className="w-8 h-8 text-white" />
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {answers.map((answer, index) => (
-                  <div key={index} className="bg-zinc-800/50 rounded-lg p-6">
-                    <h3 className="font-semibold mb-2">Question {index + 1}</h3>
-                    <p className="text-2xl text-white mb-2">{answer}</p>
-                    <p className="text-sm text-zinc-400">
-                      {selectedQuiz.questions[index].question}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="border-t border-zinc-800 pt-6 mt-6">
-                <div className="text-center">
-                  <p className="text-sm text-zinc-400 mb-2">Your Score</p>
-                  <p className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 text-transparent bg-clip-text">
-                    {answers.filter(a => a === 'Correct').length} / {answers.length}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex justify-center mt-8">
-                <Button
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
-                  onClick={() => setSelectedQuiz(null)}
-                >
-                  Try Another Quiz
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        )}
+            </motion.div>
+          ))}
+        </div>
       </div>
     </div>
   );
