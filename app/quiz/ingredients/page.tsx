@@ -130,10 +130,13 @@ export default function IngredientsQuizPage() {
       <div className="min-h-screen bg-gradient-to-b from-primary/10 to-primary/5 py-12">
         <div className="container max-w-4xl mx-auto px-4">
           <ProgressHeader 
-            title="Ingredient Sensitivity"
+            title="Ingredient Preferences"
+            category="ingredients"
+            progress={progress}
+            canGoBack={currentQuestionIndex > 0}
+            onBack={handlePrevious}
             currentStep={currentQuestionIndex + 1}
             totalSteps={ingredientQuestions.length}
-            progress={progress}
           />
 
           <motion.div

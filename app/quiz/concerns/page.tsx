@@ -141,9 +141,12 @@ export default function ConcernsQuizPage() {
         <div className="container max-w-4xl mx-auto px-4">
           <ProgressHeader 
             title="Skin Concerns"
+            category="concerns"
+            progress={progress}
+            canGoBack={currentQuestionIndex > 0}
+            onBack={handlePrevious}
             currentStep={currentQuestionIndex + 1}
             totalSteps={concernQuestions.length}
-            progress={progress}
           />
 
           <motion.div

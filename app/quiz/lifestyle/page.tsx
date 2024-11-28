@@ -131,9 +131,12 @@ export default function LifestyleQuizPage() {
           <QuizProgress />
           <ProgressHeader 
             title="Lifestyle Assessment"
+            category="lifestyle"
+            progress={progress}
+            canGoBack={currentQuestionIndex > 0}
+            onBack={handlePrevious}
             currentStep={currentQuestionIndex + 1}
             totalSteps={lifestyleQuestions.length}
-            progress={progress}
           />
 
           <motion.div
