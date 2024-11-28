@@ -27,6 +27,7 @@ const quizzes: QuizType[] = [
     icon: Heart,
     href: '/quiz/lifestyle',
     gradient: 'from-pink-500 to-rose-500',
+    category: 'lifestyle',
     questions: [
       {
         question: 'How much water do you drink daily?',
@@ -49,11 +50,12 @@ const quizzes: QuizType[] = [
     ]
   },
   {
-    title: 'Skin Analysis Quiz',
-    description: 'Discover your unique skin type and characteristics',
-    icon: Beaker,
-    href: '/quiz/skin-analysis',
+    title: 'Skin Concerns',
+    description: 'Identify and address your skin concerns',
+    icon: Heart,
+    href: '/quiz/concerns',
     gradient: 'from-blue-500 to-purple-500',
+    category: 'concerns',
     questions: [
       {
         question: 'How does your skin feel after cleansing?',
@@ -81,6 +83,7 @@ const quizzes: QuizType[] = [
     icon: Beaker,
     href: '/quiz/ingredients',
     gradient: 'from-teal-500 to-green-500',
+    category: 'ingredients',
     questions: [
       {
         question: 'What does Hyaluronic Acid do?',
@@ -99,6 +102,7 @@ const quizzes: QuizType[] = [
     icon: Sparkles,
     href: '/quiz/routine',
     gradient: 'from-amber-500 to-orange-500',
+    category: 'routine',
     questions: [
       {
         question: 'What is your skin type?',
@@ -117,6 +121,7 @@ const quizzes: QuizType[] = [
     icon: GraduationCap,
     href: '/quiz/expert',
     gradient: 'from-emerald-500 to-teal-500',
+    category: 'expert',
     questions: [
       {
         question: 'What is the primary function of the skin\'s barrier function?',
