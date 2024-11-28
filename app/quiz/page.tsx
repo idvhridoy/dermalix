@@ -18,8 +18,9 @@ import {
   Menu,
   X
 } from 'lucide-react';
+import type { QuizType } from '@/types/quiz-components';
 
-const quizzes = [
+const quizzes: QuizType[] = [
   {
     title: 'Lifestyle Quiz',
     description: 'Discover how your daily habits affect your skin health',
@@ -131,13 +132,13 @@ const quizzes = [
 ];
 
 export default function QuizPage() {
-  const [selectedQuiz, setSelectedQuiz] = useState(null);
+  const [selectedQuiz, setSelectedQuiz] = useState<QuizType | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState([]);
+  const [answers, setAnswers] = useState<string[]>([]);
   const [showResult, setShowResult] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const handleQuizSelect = (quiz) => {
+  const handleQuizSelect = (quiz: QuizType) => {
     window.location.href = quiz.href;
   };
 
