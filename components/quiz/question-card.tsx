@@ -1,11 +1,19 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import type { QuizQuestion } from '@/types/quiz';
+import { cn } from '@/lib/utils';
+
+interface Option {
+  id: string;
+  label: string;
+  impact: string;
+}
 
 interface QuestionCardProps {
-  question: QuizQuestion;
-  onAnswerSelect: (answer: string, impact: string) => void;
+  question: string;
+  options: Option[];
+  selectedOption: string | undefined;
+  onOptionSelect: (optionId: string, impact: string) => void;
 }
 
 const questionVariants = {
@@ -14,7 +22,7 @@ const questionVariants = {
   exit: { opacity: 0, y: -20 }
 };
 
-export const QuestionCard = memo(function QuestionCard({ question, onAnswerSelect }: QuestionCardProps) {
+export const QuestionCard = memo(function QuestionCard({ question, options, selectedOption, onOptionSelect }: QuestionCardProps) {
   return (
     <motion.div
       variants={questionVariants}
@@ -26,34 +34,36 @@ export const QuestionCard = memo(function QuestionCard({ question, onAnswerSelec
       aria-labelledby="question-title"
     >
       <h2 id="question-title" className="text-2xl font-semibold mb-6">
-        {question.question}
+        {question}
       </h2>
       <div 
         className="grid gap-4"
         role="radiogroup"
         aria-labelledby="question-title"
       >
-        {('options' in question ? question.options : []).map((option, index) => {
-          const { text, impact } = typeof option === 'string' ? { text: option, impact: '' } : option;
-          return (
-            <Button
-              key={text}
-              variant="outline"
-              className="w-full py-6 text-lg justify-start px-6 hover:bg-primary/5"
-              onClick={() => onAnswerSelect(text, impact)}
-              role="radio"
-              aria-checked="false"
-              tabIndex={0}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  onAnswerSelect(text, impact);
-                }
-              }}
-            >
-              {text}
-            </Button>
-          );
-        })}
+        {options.map((option) => (
+          <Button
+            key={option.id}
+            variant="outline"
+            className={cn(
+              "w-full py-6 text-lg justify-start px-6 hover:bg-primary/5",
+              selectedOption === option.id
+                ? "bg-primary/10 text-primary"
+                : ""
+            )}
+            onClick={() => onOptionSelect(option.id, option.impact)}
+            role="radio"
+            aria-checked={selectedOption === option.id}
+            tabIndex={0}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                onOptionSelect(option.id, option.impact);
+              }
+            }}
+          >
+            {option.label}
+          </Button>
+        ))}
       </div>
     </motion.div>
   );

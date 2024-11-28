@@ -1,10 +1,10 @@
 import { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
-import type { QuizResult, CategoryType } from '@/types/quiz';
+import type { QuizResult, CategoryType, QuizAnswer } from '@/types/quiz';
 
 interface QuizState {
   currentCategory: CategoryType;
   currentQuestion: number;
-  answers: QuizResult['answers'];
+  answers: QuizAnswer[];
   isLoading: boolean;
   error: string | null;
   progress: number;
@@ -13,7 +13,7 @@ interface QuizState {
 type QuizAction =
   | { type: 'SET_CATEGORY'; payload: CategoryType }
   | { type: 'SET_QUESTION'; payload: number }
-  | { type: 'ADD_ANSWER'; payload: QuizResult['answers'][0] }
+  | { type: 'ADD_ANSWER'; payload: QuizAnswer }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_ERROR'; payload: string | null }
   | { type: 'SET_PROGRESS'; payload: number }

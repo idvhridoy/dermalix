@@ -18,12 +18,14 @@ export interface LifestyleQuestions {
 
 export interface QuizResult {
   score?: number;
-  category?: string;
-  answers: {
-    question: string;
-    selectedAnswer: string;
-    impact?: string;
-  }[];
+  answers: QuizAnswer[];
 }
 
-export type CategoryType = 'sleep' | 'diet' | 'stress';
+export interface QuizAnswer {
+  category: CategoryType;
+  questionId: string;
+  selectedOption: string;
+  impact: string;
+}
+
+export type CategoryType = 'sleep' | 'diet' | 'stress' | 'concerns' | 'ingredients';

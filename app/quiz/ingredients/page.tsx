@@ -73,7 +73,7 @@ export default function IngredientsQuizPage() {
   // Load saved answers if they exist
   useEffect(() => {
     const savedAnswers = state.answers.reduce((acc, answer) => {
-      if (answer.category === 'ingredients') {
+      if (answer.category === 'ingredients' && answer.questionId) {
         acc[answer.questionId] = answer.selectedOption;
       }
       return acc;
@@ -90,7 +90,7 @@ export default function IngredientsQuizPage() {
     dispatch({
       type: 'ADD_ANSWER',
       payload: {
-        category: 'ingredients',
+        category: 'ingredients' as const,
         questionId,
         selectedOption: optionId,
         impact

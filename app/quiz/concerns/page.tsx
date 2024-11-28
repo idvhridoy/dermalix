@@ -83,7 +83,7 @@ export default function ConcernsQuizPage() {
   // Load saved answers if they exist
   useEffect(() => {
     const savedAnswers = state.answers.reduce((acc, answer) => {
-      if (answer.category === 'concerns') {
+      if (answer.category === 'concerns' && answer.questionId) {
         acc[answer.questionId] = answer.selectedOption;
       }
       return acc;
@@ -100,7 +100,7 @@ export default function ConcernsQuizPage() {
     dispatch({
       type: 'ADD_ANSWER',
       payload: {
-        category: 'concerns',
+        category: 'concerns' as const,
         questionId,
         selectedOption: optionId,
         impact

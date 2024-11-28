@@ -1,7 +1,11 @@
 import './globals.css';
 import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import { RootLayoutClient } from '../components/root-layout-client';
 import { BackToTop } from '@/components/back-to-top';
+import { LiveVisitors } from '@/components/live-visitors';
+
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Dermalix - Innovative Skincare Solutions',
@@ -15,10 +19,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <RootLayoutClient>
-        {children}
-        <BackToTop />
-      </RootLayoutClient>
+      <body className={inter.className}>
+        <RootLayoutClient>
+          {children}
+          <BackToTop />
+          <LiveVisitors />
+        </RootLayoutClient>
+      </body>
     </html>
   );
 }
