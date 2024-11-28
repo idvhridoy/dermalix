@@ -1,323 +1,178 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useQuiz } from '@/contexts/quiz-context';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { 
-  ArrowRight as ArrowRightIcon, 
-  ArrowLeft as ArrowLeftIcon, 
-  Activity as ActivityIcon, 
-  Sun as SunIcon, 
-  Moon as MoonIcon, 
-  Utensils as UtensilsIcon, 
-  Coffee as CoffeeIcon 
-} from 'lucide-react';
-import { Heart } from 'lucide-react';
+import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState, useCallback, useEffect } from 'react';
+import ErrorBoundary from '@/components/error-boundary';
+import { QuestionCard } from '@/components/quiz/question-card';
+import { ProgressHeader } from '@/components/quiz/progress-header';
 
-const lifestyleQuestions = {
-  sleep: [
-    {
-      question: 'How many hours of sleep do you typically get?',
-      options: [
-        { text: 'Less than 6 hours', impact: 'Poor' },
-        { text: '6-7 hours', impact: 'Fair' },
-        { text: '7-8 hours', impact: 'Good' },
-        { text: 'More than 8 hours', impact: 'Excellent' }
-      ]
-    },
-    {
-      question: 'What time do you usually go to bed?',
-      options: [
-        { text: 'Before 10 PM', impact: 'Excellent' },
-        { text: '10 PM - 12 AM', impact: 'Good' },
-        { text: '12 AM - 2 AM', impact: 'Fair' },
-        { text: 'After 2 AM', impact: 'Poor' }
-      ]
-    }
-  ],
-  diet: [
-    {
-      question: 'How would you rate your water intake?',
-      options: [
-        { text: 'Less than 4 glasses', impact: 'Poor' },
-        { text: '4-6 glasses', impact: 'Fair' },
-        { text: '6-8 glasses', impact: 'Good' },
-        { text: 'More than 8 glasses', impact: 'Excellent' }
-      ]
-    },
-    {
-      question: 'How often do you eat processed foods?',
-      options: [
-        { text: 'Daily', impact: 'Poor' },
-        { text: '2-3 times a week', impact: 'Fair' },
-        { text: 'Once a week', impact: 'Good' },
-        { text: 'Rarely', impact: 'Excellent' }
-      ]
-    }
-  ],
-  stress: [
-    {
-      question: 'How would you rate your stress levels?',
-      options: [
-        { text: 'Very High', impact: 'Poor' },
-        { text: 'High', impact: 'Fair' },
-        { text: 'Moderate', impact: 'Good' },
-        { text: 'Low', impact: 'Excellent' }
-      ]
-    },
-    {
-      question: 'How often do you practice stress management?',
-      options: [
-        { text: 'Never', impact: 'Poor' },
-        { text: 'Occasionally', impact: 'Fair' },
-        { text: 'Weekly', impact: 'Good' },
-        { text: 'Daily', impact: 'Excellent' }
-      ]
-    }
-  ]
-};
-
-const categories = ['sleep', 'diet', 'stress'];
-
-type CategoryType = 'sleep' | 'diet' | 'stress';
-
-interface CategoryIconProps {
-  category: CategoryType;
-}
-
-const CategoryIcon: React.FC<CategoryIconProps> = ({ category }) => {
-  switch (category) {
-    case 'sleep':
-      return <MoonIcon className="w-6 h-6 text-primary" />;
-    case 'diet':
-      return <UtensilsIcon className="w-6 h-6 text-primary" />;
-    case 'stress':
-      return <ActivityIcon className="w-6 h-6 text-primary" />;
-    default:
-      return <ActivityIcon className="w-6 h-6 text-primary" />;
+const lifestyleQuestions = [
+  {
+    id: 'sleep',
+    question: 'How would you describe your sleep pattern?',
+    options: [
+      { id: 'excellent', label: '8+ hours consistently', impact: 'Excellent' },
+      { id: 'good', label: '6-8 hours most nights', impact: 'Good' },
+      { id: 'fair', label: '4-6 hours irregular', impact: 'Fair' },
+      { id: 'poor', label: 'Less than 4 hours', impact: 'Poor' }
+    ]
+  },
+  {
+    id: 'stress',
+    question: 'How do you manage stress in your daily life?',
+    options: [
+      { id: 'excellent', label: 'Regular meditation/yoga', impact: 'Excellent' },
+      { id: 'good', label: 'Occasional relaxation', impact: 'Good' },
+      { id: 'fair', label: 'Rare stress management', impact: 'Fair' },
+      { id: 'poor', label: 'No stress management', impact: 'Poor' }
+    ]
+  },
+  {
+    id: 'diet',
+    question: 'How would you rate your daily water intake?',
+    options: [
+      { id: 'excellent', label: '8+ glasses daily', impact: 'Excellent' },
+      { id: 'good', label: '6-8 glasses daily', impact: 'Good' },
+      { id: 'fair', label: '4-6 glasses daily', impact: 'Fair' },
+      { id: 'poor', label: 'Less than 4 glasses', impact: 'Poor' }
+    ]
+  },
+  {
+    id: 'exercise',
+    question: 'How often do you exercise?',
+    options: [
+      { id: 'excellent', label: '4-5 times per week', impact: 'Excellent' },
+      { id: 'good', label: '2-3 times per week', impact: 'Good' },
+      { id: 'fair', label: 'Once per week', impact: 'Fair' },
+      { id: 'poor', label: 'Rarely or never', impact: 'Poor' }
+    ]
+  },
+  {
+    id: 'screen',
+    question: 'How many hours do you spend in front of screens daily?',
+    options: [
+      { id: 'excellent', label: 'Less than 4 hours', impact: 'Excellent' },
+      { id: 'good', label: '4-6 hours', impact: 'Good' },
+      { id: 'fair', label: '6-8 hours', impact: 'Fair' },
+      { id: 'poor', label: '8+ hours', impact: 'Poor' }
+    ]
   }
-};
-
-const categoryTitles = {
-  sleep: 'Sleep Habits',
-  diet: 'Diet & Nutrition',
-  stress: 'Stress Management'
-};
+];
 
 export default function LifestyleQuizPage() {
-  const [currentCategory, setCurrentCategory] = useState(0);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string[]>>({});
-  const [showResult, setShowResult] = useState(false);
-  const [progress, setProgress] = useState(0);
   const router = useRouter();
+  const { state, dispatch } = useQuiz();
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const totalQuestions = Object.values(lifestyleQuestions).flat().length;
+  // Load saved answers if they exist
+  useEffect(() => {
+    const savedAnswers = state.answers.reduce((acc, answer) => {
+      if (answer.category === 'lifestyle') {
+        acc[answer.questionId] = answer.selectedOption;
+      }
+      return acc;
+    }, {} as Record<string, string>);
+    setSelectedAnswers(savedAnswers);
+  }, [state.answers]);
 
-  const handleAnswer = (answer: string) => {
-    const category = categories[currentCategory];
-    setAnswers(prev => ({
+  const handleOptionSelect = useCallback((questionId: string, optionId: string, impact: string) => {
+    setSelectedAnswers(prev => ({
       ...prev,
-      [category]: [...(prev[category] || []), answer]
+      [questionId]: optionId
     }));
 
-    if (currentQuestion < lifestyleQuestions[category as keyof typeof lifestyleQuestions].length - 1) {
-      setCurrentQuestion(prev => prev + 1);
-    } else if (currentCategory < categories.length - 1) {
-      setCurrentCategory(prev => prev + 1);
-      setCurrentQuestion(0);
+    dispatch({
+      type: 'ADD_ANSWER',
+      payload: {
+        category: 'lifestyle',
+        questionId,
+        selectedOption: optionId,
+        impact
+      }
+    });
+  }, [dispatch]);
+
+  const handleNext = useCallback(() => {
+    if (currentQuestionIndex < lifestyleQuestions.length - 1) {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentQuestionIndex(prev => prev + 1);
+        setIsTransitioning(false);
+      }, 300);
     } else {
-      setShowResult(true);
+      router.push('/quiz/concerns');
     }
+  }, [currentQuestionIndex, router]);
 
-    const questionsAnswered = Object.values(answers).flat().length + 1;
-    setProgress((questionsAnswered / totalQuestions) * 100);
-  };
-
-  const goBack = () => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion(prev => prev - 1);
-    } else if (currentCategory > 0) {
-      setCurrentCategory(prev => prev - 1);
-      setCurrentQuestion(lifestyleQuestions[categories[currentCategory - 1] as keyof typeof lifestyleQuestions].length - 1);
+  const handlePrevious = useCallback(() => {
+    if (currentQuestionIndex > 0) {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentQuestionIndex(prev => prev - 1);
+        setIsTransitioning(false);
+      }, 300);
     }
-    
-    const questionsAnswered = Object.values(answers).flat().length - 1;
-    setProgress(Math.max((questionsAnswered / totalQuestions) * 100, 0));
-  };
+  }, [currentQuestionIndex]);
 
-  const getLifestyleScore = () => {
-    const impactScores = {
-      'Excellent': 100,
-      'Good': 75,
-      'Fair': 50,
-      'Poor': 25
-    };
-
-    const allAnswers = Object.values(answers).flat();
-    const totalScore = allAnswers.reduce((acc, answer) => acc + impactScores[answer as keyof typeof impactScores], 0);
-    return Math.round(totalScore / allAnswers.length);
-  };
-
-  const getRecommendations = () => {
-    const score = getLifestyleScore();
-    let recommendations = [];
-
-    if (score < 50) {
-      recommendations = [
-        'Consider establishing a consistent sleep schedule',
-        'Increase water intake throughout the day',
-        'Try meditation or yoga for stress management',
-        'Reduce processed food consumption'
-      ];
-    } else if (score < 75) {
-      recommendations = [
-        'Fine-tune your bedtime routine',
-        'Add more fruits and vegetables to your diet',
-        'Schedule regular exercise sessions',
-        'Practice mindfulness daily'
-      ];
-    } else {
-      recommendations = [
-        'Maintain your healthy sleep schedule',
-        'Continue your balanced diet',
-        'Keep up with your stress management routine',
-        'Share your healthy habits with others'
-      ];
-    }
-
-    return recommendations;
-  };
-
-  const questionVariants = {
-    initial: { x: 50, opacity: 0 },
-    animate: { x: 0, opacity: 1 },
-    exit: { x: -50, opacity: 0 }
-  };
-
-  const restartQuiz = () => {
-    setShowResult(false);
-    setCurrentCategory(0);
-    setCurrentQuestion(0);
-    setAnswers({});
-    setProgress(0);
-  };
+  const currentQuestion = lifestyleQuestions[currentQuestionIndex];
+  const progress = ((currentQuestionIndex + 1) / lifestyleQuestions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        {!showResult ? (
-          <div className="max-w-2xl mx-auto">
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <CategoryIcon category={categories[currentCategory]} />
-                  <h1 className="text-3xl font-bold">
-                    {categoryTitles[categories[currentCategory] as keyof typeof categoryTitles]}
-                  </h1>
-                </div>
-                {(currentQuestion > 0 || currentCategory > 0) && (
-                  <Button
-                    variant="ghost"
-                    onClick={goBack}
-                    className="flex items-center gap-2"
-                  >
-                    <ArrowLeftIcon className="w-4 h-4" />
-                    Back
-                  </Button>
-                )}
-              </div>
-              <Progress value={progress} className="h-2" />
-              <p className="text-center mt-2 text-muted-foreground">
-                {Math.round(progress)}% Complete
-              </p>
-            </div>
+    <ErrorBoundary>
+      <div className="min-h-screen bg-gradient-to-b from-primary/10 to-primary/5 py-12">
+        <div className="container max-w-4xl mx-auto px-4">
+          <ProgressHeader 
+            title="Lifestyle Assessment"
+            currentStep={currentQuestionIndex + 1}
+            totalSteps={lifestyleQuestions.length}
+            progress={progress}
+          />
 
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`${currentCategory}-${currentQuestion}`}
-                variants={questionVariants}
-                initial="initial"
-                animate="animate"
-                exit="exit"
-                className="bg-card rounded-xl p-8 shadow-lg"
-              >
-                <h2 className="text-2xl font-semibold mb-6">
-                  {lifestyleQuestions[categories[currentCategory] as keyof typeof lifestyleQuestions][currentQuestion].question}
-                </h2>
-                <div className="grid gap-4">
-                  {lifestyleQuestions[categories[currentCategory] as keyof typeof lifestyleQuestions][currentQuestion].options.map((option) => (
-                    <Button
-                      key={option.text}
-                      variant="outline"
-                      className="w-full py-6 text-lg justify-start px-6 hover:bg-primary/5"
-                      onClick={() => handleAnswer(option.impact)}
-                    >
-                      {option.text}
-                    </Button>
-                  ))}
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        ) : (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="max-w-4xl mx-auto bg-black rounded-lg shadow-lg p-8 text-white"
+            key={currentQuestionIndex}
+            initial={{ opacity: 0, x: isTransitioning ? 50 : -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: isTransitioning ? -50 : 50 }}
+            transition={{ duration: 0.3 }}
+            className="mt-8"
           >
-            <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 text-transparent bg-clip-text">Quiz Results</h1>
-              <p className="text-2xl text-purple-300">
-                You scored {getLifestyleScore()} out of {totalQuestions}
-              </p>
-            </div>
-
-            <div className="grid gap-8">
-              <div className="bg-zinc-900/50 p-6 rounded-lg border border-zinc-800">
-                <h2 className="text-2xl font-bold mb-4 text-blue-400">Feedback</h2>
-                <div className="flex items-start gap-3">
-                  <div className="bg-purple-500/10 p-2 rounded-lg mt-1">
-                    <Heart className="w-4 h-4 text-purple-400" />
-                  </div>
-                  <p className="text-lg text-zinc-300">
-                    {getLifestyleScore() === totalQuestions 
-                      ? "Perfect score! You have excellent lifestyle habits!" 
-                      : getLifestyleScore() >= totalQuestions * 0.75 
-                        ? "Great job! Your lifestyle choices support healthy habits." 
-                        : getLifestyleScore() >= totalQuestions * 0.5
-                          ? "Good effort! Keep working on your lifestyle habits." 
-                          : "There's room for improvement in your lifestyle routine."}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-8 flex justify-center gap-4">
-                <Button
-                  onClick={restartQuiz}
-                  size="lg"
-                  variant="outline"
-                  className="gap-2 border-purple-500 text-purple-400 hover:bg-purple-500/10"
-                >
-                  <ArrowRightIcon className="w-4 h-4 rotate-180" />
-                  Restart Quiz
-                </Button>
-                <Button
-                  size="lg"
-                  className="gap-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-                  onClick={() => router.push('/quiz')}
-                >
-                  View All Quizzes
-                  <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </div>
-            </div>
+            <QuestionCard
+              question={currentQuestion.question}
+              options={currentQuestion.options}
+              selectedOption={selectedAnswers[currentQuestion.id]}
+              onOptionSelect={(optionId, impact) => 
+                handleOptionSelect(currentQuestion.id, optionId, impact)
+              }
+            />
           </motion.div>
-        )}
+
+          <div className="flex justify-between mt-8">
+            <Button
+              variant="outline"
+              onClick={handlePrevious}
+              disabled={currentQuestionIndex === 0}
+              className="gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Previous
+            </Button>
+            <Button
+              onClick={handleNext}
+              disabled={!selectedAnswers[currentQuestion.id]}
+              className="gap-2"
+            >
+              {currentQuestionIndex === lifestyleQuestions.length - 1 ? 'Next Section' : 'Next'}
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
 }

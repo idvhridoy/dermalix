@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronLeft, X } from 'lucide-react';
-import { SkincareParticles } from './skincare-particles';
+import Link from 'next/link';
 
 const announcements = [
   {
@@ -48,62 +48,56 @@ export function AnnouncementSlider() {
   if (!isVisible) return null;
 
   return (
-    <div className="relative bg-gradient-to-r from-primary/5 via-background to-primary/5 backdrop-blur-sm border-b border-primary/20 overflow-hidden z-0">
-      <SkincareParticles />
-      <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 max-w-7xl relative">
-        <div className="h-14 relative overflow-hidden flex items-center justify-center">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentSlide}
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -50, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="absolute inset-0 flex items-center justify-center z-10 px-12"
-            >
-              <a 
-                href={announcements[currentSlide].link}
-                className="text-sm sm:text-base text-center hover:text-primary transition-colors duration-300 truncate max-w-full"
-              >
-                {announcements[currentSlide].text}
-              </a>
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Navigation Buttons */}
+    <div className="relative bg-gradient-to-r from-primary/5 via-background to-primary/5 backdrop-blur-sm border-b border-primary/20 overflow-hidden mt-16">
+      <div className="container mx-auto px-4">
+        <div className="relative flex items-center justify-center h-10">
+          {/* Previous button */}
           <button
             onClick={() => setCurrentSlide(prev => prev === 0 ? announcements.length - 1 : prev - 1)}
-            className="absolute left-0 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-background/50 transition-colors duration-300 z-20"
+            className="absolute left-0 p-1 text-muted-foreground hover:text-primary transition-colors"
             aria-label="Previous announcement"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
+
+          {/* Announcements */}
+          <div className="overflow-hidden w-full">
+            <AnimatePresence initial={false} mode="wait">
+              <motion.div
+                key={currentSlide}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center justify-center text-sm text-center"
+              >
+                <Link 
+                  href={announcements[currentSlide].link}
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {announcements[currentSlide].text}
+                </Link>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Next button */}
           <button
             onClick={() => setCurrentSlide(prev => prev >= announcements.length - 1 ? 0 : prev + 1)}
-            className="absolute right-0 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-background/50 transition-colors duration-300 z-20"
+            className="absolute right-0 p-1 text-muted-foreground hover:text-primary transition-colors"
             aria-label="Next announcement"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
 
-          {/* Close Button */}
+          {/* Close button */}
           <button
             onClick={() => setIsVisible(false)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-background/50 transition-colors duration-300 z-20"
+            className="absolute right-4 p-1 text-muted-foreground hover:text-primary transition-colors"
             aria-label="Close announcements"
           >
             <X className="w-4 h-4" />
           </button>
-        </div>
-
-        {/* Progress Bar */}
-        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary/10">
-          <motion.div
-            className="h-full bg-primary"
-            initial={{ width: "0%" }}
-            animate={{ width: "100%" }}
-            transition={{ duration: 3, repeat: Infinity }}
-          />
         </div>
       </div>
     </div>

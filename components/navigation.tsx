@@ -99,30 +99,6 @@ const megaMenuContent: Record<string, MegaMenuContent> = {
   }
 };
 
-const routes: Route[] = [
-  { href: '/', label: 'Home' },
-  { 
-    label: 'Products',
-    children: [
-      {
-        label: 'Acne Treatment Serum',
-        href: '/products/acne-treatment-serum',
-        description: 'Salicylic Acid 2% & Niacinamide 2% for effective acne control'
-      },
-      {
-        label: 'Brightening Serum',
-        href: '/products/brightening-serum',
-        description: 'Alpha Arbutin 2% & Niacinamide 2% for radiant skin'
-      }
-    ]
-  },
-  { label: 'About', megaMenu: 'about' },
-  { href: '/reviews', label: 'Reviews' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/faq', label: 'FAQ' },
-  { href: '/contact', label: 'Contact' },
-];
-
 const MegaMenu: React.FC<MegaMenuProps> = ({ content, onClose }) => {
   const handleLinkClick = () => {
     onClose();
@@ -192,189 +168,205 @@ const MegaMenu: React.FC<MegaMenuProps> = ({ content, onClose }) => {
 };
 
 export function Navigation() {
-  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
 
-  // Close mega menu when route changes
+  // Handle scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close menu when route changes
   useEffect(() => {
     setIsOpen(false);
     setActiveMegaMenu(null);
   }, [pathname]);
 
-  // Scroll detection
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const toggleMobileMenu = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const closeMobileMenu = () => {
-    setIsOpen(false);
-  };
+  const routes: Route[] = [
+    { label: 'Home', href: '/' },
+    {
+      label: 'About',
+      megaMenu: 'about'
+    },
+    {
+      label: 'Products',
+      href: '/products',
+      children: [
+        { label: 'All Products', href: '/products' },
+        { label: 'Cleansers', href: '/products/cleansers' },
+        { label: 'Serums', href: '/products/serums' },
+        { label: 'Moisturizers', href: '/products/moisturizers' }
+      ]
+    },
+    { label: 'Quiz', href: '/quiz' },
+    { label: 'Contact', href: '/contact' }
+  ];
 
   return (
-    <nav 
-      className={`
-        fixed top-0 left-0 right-0 z-50 
-        transition-all duration-300 
-        ${isScrolled ? 'bg-background/80 backdrop-blur-md shadow-md' : 'bg-transparent'}
-      `}
-    >
-      <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 max-w-7xl">
-        <div className="flex items-center justify-between py-4">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <Image 
-              src="https://images.unsplash.com/photo-1556228720-195a672e8a03" 
-              alt="Dermalix Logo" 
-              width={40} 
-              height={40} 
-              className="w-10 h-10 rounded-full object-cover"
-            />
-            <span className="text-xl font-bold text-foreground">Dermalix</span>
-          </Link>
+    <>
+      <header 
+        className={cn(
+          "fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-lg transition-all duration-200 z-50",
+          isScrolled && "shadow-md"
+        )}
+      >
+        <nav className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <Link href="/" className="flex items-center space-x-2">
+              <Image
+                src="/logo.png"
+                alt="Dermalix Logo"
+                width={32}
+                height={32}
+                className="w-8 h-8"
+              />
+              <span className="text-xl font-bold">Dermalix</span>
+            </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-6">
-            {routes.map((route, index) => (
-              <div 
-                key={index} 
-                className="relative group"
-                onMouseEnter={() => route.megaMenu && setActiveMegaMenu(route.megaMenu)}
-                onMouseLeave={() => setActiveMegaMenu(null)}
-              >
-                <Link 
-                  href={route.href || '#'}
-                  className={cn(
-                    "text-foreground/70 hover:text-primary transition-colors",
-                    pathname === route.href && "text-primary font-semibold"
-                  )}
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-8">
+              {routes.map((route) => (
+                <div
+                  key={route.label}
+                  className="relative"
+                  onMouseEnter={() => route.megaMenu && setActiveMegaMenu(route.megaMenu)}
+                  onMouseLeave={() => setActiveMegaMenu(null)}
                 >
-                  {route.label}
-                  {route.children && <ChevronDown className="inline-block ml-1 w-4 h-4" />}
-                </Link>
-                
-                {route.megaMenu && activeMegaMenu === route.megaMenu && (
-                  <AnimatePresence>
-                    <MegaMenu 
-                      content={megaMenuContent[route.megaMenu]} 
-                      onClose={() => setActiveMegaMenu(null)} 
-                    />
-                  </AnimatePresence>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* Mobile Menu Toggle */}
-          <div className="lg:hidden">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={toggleMobileMenu}
-              className={`
-                fixed top-4 right-4 z-60 
-                bg-background/80 backdrop-blur-md 
-                hover:bg-primary/10 
-                w-12 h-12 rounded-full 
-                shadow-lg 
-                transition-all duration-300
-                ${isOpen ? 'rotate-90' : ''}
-              `}
-            >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </Button>
-          </div>
-
-          {/* Mobile Menu Overlay */}
-          <AnimatePresence>
-            {isOpen && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-background/95 backdrop-blur-md z-40 lg:hidden"
-              >
-                <div className="container mx-auto px-4 py-8 mt-16">
-                  <div className="space-y-4">
-                    {routes.map((route, index) => (
-                      <div key={index} className="border-b border-foreground/10 pb-4">
-                        {route.children ? (
-                          <div>
-                            <div 
-                              className="flex items-center justify-between text-xl font-semibold text-foreground/90"
-                              onClick={() => setActiveMegaMenu(
-                                activeMegaMenu === route.megaMenu ? null : route.megaMenu
-                              )}
-                            >
-                              {route.label}
-                              <ChevronDown 
-                                className={`
-                                  w-6 h-6 transition-transform 
-                                  ${activeMegaMenu === route.megaMenu ? 'rotate-180' : ''}
-                                `} 
-                              />
-                            </div>
-                            {activeMegaMenu === route.megaMenu && (
-                              <div className="mt-4 space-y-3">
-                                {route.children.map((child, childIndex) => (
-                                  <Link
-                                    key={childIndex}
-                                    href={child.href}
-                                    onClick={closeMobileMenu}
-                                    className="block py-2 text-foreground/70 hover:text-primary"
-                                  >
-                                    {child.label}
-                                    {child.description && (
-                                      <p className="text-sm text-foreground/50 mt-1">
-                                        {child.description}
-                                      </p>
-                                    )}
-                                  </Link>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <Link
-                            href={route.href || '#'}
-                            onClick={closeMobileMenu}
-                            className="block text-xl font-semibold text-foreground/90 hover:text-primary"
-                          >
-                            {route.label}
-                          </Link>
+                  {route.href ? (
+                    <Link
+                      href={route.href}
+                      className={cn(
+                        "text-sm font-medium transition-colors hover:text-primary",
+                        pathname === route.href ? "text-primary" : "text-muted-foreground"
+                      )}
+                    >
+                      <span className="flex items-center gap-1">
+                        {route.label}
+                        {(route.megaMenu || route.children) && (
+                          <ChevronDown className="w-4 h-4" />
                         )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                      </span>
+                    </Link>
+                  ) : (
+                    <button
+                      className={cn(
+                        "text-sm font-medium transition-colors hover:text-primary flex items-center gap-1",
+                        activeMegaMenu === route.megaMenu ? "text-primary" : "text-muted-foreground"
+                      )}
+                    >
+                      {route.label}
+                      <ChevronDown className="w-4 h-4" />
+                    </button>
+                  )}
 
-          {/* Action Buttons */}
-          <div className="hidden lg:flex items-center space-x-4">
-            <Button variant="ghost" size="icon">
-              <Search className="w-5 h-5" />
-            </Button>
-            <Button variant="ghost" size="icon">
-              <User className="w-5 h-5" />
-            </Button>
-            <Button variant="ghost" size="icon">
-              <ShoppingCart className="w-5 h-5" />
+                  {/* Dropdown for regular menu items */}
+                  {route.children && !route.megaMenu && (
+                    <div className={cn(
+                      "absolute top-full left-0 w-48 bg-background border rounded-md shadow-lg py-2 transition-all duration-200",
+                      activeMegaMenu === route.label ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"
+                    )}>
+                      {route.children.map((child) => (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          className="block px-4 py-2 text-sm text-muted-foreground hover:bg-primary/5 hover:text-primary"
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Mega menu */}
+                  {route.megaMenu && activeMegaMenu === route.megaMenu && (
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-screen max-w-7xl mx-auto">
+                      <MegaMenu 
+                        content={megaMenuContent[route.megaMenu]} 
+                        onClose={() => setActiveMegaMenu(null)}
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Right side icons */}
+            <div className="hidden md:flex items-center space-x-4">
+              <Button variant="ghost" size="icon">
+                <Search className="w-5 h-5" />
+              </Button>
+              <Button variant="ghost" size="icon">
+                <User className="w-5 h-5" />
+              </Button>
+              <Button variant="ghost" size="icon">
+                <ShoppingCart className="w-5 h-5" />
+              </Button>
+            </div>
+
+            {/* Mobile menu button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              {isOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </Button>
           </div>
-        </div>
-      </div>
-    </nav>
+        </nav>
+
+        {/* Mobile Navigation */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden border-t"
+            >
+              <div className="container mx-auto px-4 py-4">
+                {routes.map((route) => (
+                  <div key={route.label}>
+                    {route.href ? (
+                      <Link
+                        href={route.href}
+                        className={cn(
+                          "block py-2 text-base font-medium transition-colors hover:text-primary",
+                          pathname === route.href ? "text-primary" : "text-muted-foreground"
+                        )}
+                        onClick={() => setIsOpen(false)}
+                      >
+                        {route.label}
+                      </Link>
+                    ) : (
+                      <button
+                        className="w-full text-left py-2 text-base font-medium text-muted-foreground hover:text-primary"
+                        onClick={() => setActiveMegaMenu(route.megaMenu || null)}
+                      >
+                        {route.label}
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </header>
+      
+      {/* Spacer for fixed header */}
+      <div className="h-16" />
+    </>
   );
 }

@@ -170,6 +170,12 @@ const heroImages = [
   }
 ];
 
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5 }
+};
+
 export default function HomePage() {
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
@@ -303,9 +309,9 @@ export default function HomePage() {
         {/* Content */}
         <div className="container mx-auto px-4 relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={heroInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
+            initial={fadeInUp.initial}
+            animate={heroInView ? fadeInUp.animate : {}}
+            transition={fadeInUp.transition}
             className="max-w-4xl mx-auto text-center"
           >
             <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary">
@@ -374,8 +380,9 @@ export default function HomePage() {
       >
         <div className="container mx-auto px-4">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={concernsInView ? { opacity: 1, y: 0 } : {}}
+            initial={fadeInUp.initial}
+            animate={concernsInView ? fadeInUp.animate : {}}
+            transition={fadeInUp.transition}
             className="text-center mb-12"
           >
             <h2 className="text-3xl font-bold mb-4">Shop by Concern</h2>
@@ -386,8 +393,8 @@ export default function HomePage() {
             {concerns.map((concern, index) => (
               <motion.div
                 key={concern.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={concernsInView ? { opacity: 1, y: 0 } : {}}
+                initial={fadeInUp.initial}
+                animate={concernsInView ? fadeInUp.animate : {}}
                 transition={{ delay: index * 0.1 }}
                 className="group relative p-4 sm:p-6 rounded-2xl border border-primary/10 hover:border-primary/30 transition-colors overflow-hidden"
               >
@@ -418,8 +425,9 @@ export default function HomePage() {
       >
         <div className="container mx-auto px-4">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={categoriesInView ? { opacity: 1, y: 0 } : {}}
+            initial={fadeInUp.initial}
+            animate={categoriesInView ? fadeInUp.animate : {}}
+            transition={fadeInUp.transition}
             className="text-center mb-12"
           >
             <h2 className="text-3xl font-bold mb-4">Shop By Category</h2>
@@ -430,8 +438,8 @@ export default function HomePage() {
             {categories.map((category, index) => (
               <motion.div
                 key={category.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={categoriesInView ? { opacity: 1, y: 0 } : {}}
+                initial={fadeInUp.initial}
+                animate={categoriesInView ? fadeInUp.animate : {}}
                 transition={{ delay: index * 0.1 }}
                 className="group relative overflow-hidden rounded-2xl"
               >
@@ -465,8 +473,9 @@ export default function HomePage() {
       >
         <div className="container mx-auto px-4">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={productsInView ? { opacity: 1, y: 0 } : {}}
+            initial={fadeInUp.initial}
+            animate={productsInView ? fadeInUp.animate : {}}
+            transition={fadeInUp.transition}
             className="text-center mb-12"
           >
             <h2 className="text-3xl font-bold mb-4">Best Sellers</h2>
@@ -477,8 +486,8 @@ export default function HomePage() {
             {topProducts.map((product, index) => (
               <motion.div
                 key={product.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={productsInView ? { opacity: 1, y: 0 } : {}}
+                initial={fadeInUp.initial}
+                animate={productsInView ? fadeInUp.animate : {}}
                 transition={{ delay: index * 0.1 }}
                 className="group bg-background/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-primary/10"
               >
@@ -517,8 +526,8 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={aiInView ? { opacity: 1, x: 0 } : {}}
+              initial={fadeInUp.initial}
+              animate={aiInView ? fadeInUp.animate : {}}
             >
               <h2 className="text-3xl font-bold mb-6">AI-Powered Skin Analysis</h2>
               <p className="text-foreground/70 mb-8">
@@ -560,8 +569,9 @@ export default function HomePage() {
       >
         <div className="container mx-auto px-4">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={reviewsInView ? { opacity: 1, y: 0 } : {}}
+            initial={fadeInUp.initial}
+            animate={reviewsInView ? fadeInUp.animate : {}}
+            transition={fadeInUp.transition}
             className="text-center mb-12"
           >
             <h2 className="text-3xl font-bold mb-4">What Our Customers Say</h2>
@@ -580,8 +590,8 @@ export default function HomePage() {
                 <motion.div
                   key={review.name}
                   className="w-full sm:w-1/3 flex-shrink-0 px-2 sm:px-4"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={reviewsInView ? { opacity: 1, y: 0 } : {}}
+                  initial={fadeInUp.initial}
+                  animate={reviewsInView ? fadeInUp.animate : {}}
                   transition={{ delay: index * 0.1 }}
                 >
                   <div className="bg-background/80 backdrop-blur-sm p-4 sm:p-6 rounded-2xl border border-primary/10 h-full">

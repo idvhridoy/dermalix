@@ -10,60 +10,70 @@ import ErrorBoundary from '@/components/error-boundary';
 import { QuestionCard } from '@/components/quiz/question-card';
 import { ProgressHeader } from '@/components/quiz/progress-header';
 
-const ingredientQuestions = [
+const concernQuestions = [
+  {
+    id: 'skin-type',
+    question: 'How would you describe your skin type?',
+    options: [
+      { id: 'oily', label: 'Oily', impact: 'High' },
+      { id: 'dry', label: 'Dry', impact: 'High' },
+      { id: 'combination', label: 'Combination', impact: 'Medium' },
+      { id: 'normal', label: 'Normal', impact: 'Low' }
+    ]
+  },
+  {
+    id: 'acne',
+    question: 'Do you experience breakouts or acne?',
+    options: [
+      { id: 'frequent', label: 'Frequently', impact: 'High' },
+      { id: 'occasional', label: 'Occasionally', impact: 'Medium' },
+      { id: 'rare', label: 'Rarely', impact: 'Low' },
+      { id: 'never', label: 'Never', impact: 'None' }
+    ]
+  },
+  {
+    id: 'aging',
+    question: 'What are your aging concerns?',
+    options: [
+      { id: 'wrinkles', label: 'Fine lines & wrinkles', impact: 'High' },
+      { id: 'firmness', label: 'Loss of firmness', impact: 'High' },
+      { id: 'prevention', label: 'Prevention', impact: 'Medium' },
+      { id: 'none', label: 'No concerns', impact: 'None' }
+    ]
+  },
+  {
+    id: 'pigmentation',
+    question: 'Do you have any pigmentation concerns?',
+    options: [
+      { id: 'dark-spots', label: 'Dark spots', impact: 'High' },
+      { id: 'uneven-tone', label: 'Uneven skin tone', impact: 'Medium' },
+      { id: 'mild', label: 'Mild discoloration', impact: 'Low' },
+      { id: 'none', label: 'No concerns', impact: 'None' }
+    ]
+  },
   {
     id: 'sensitivity',
-    question: 'How sensitive is your skin to new products?',
+    question: 'Does your skin experience any of these sensitivities?',
     options: [
-      { id: 'very-sensitive', label: 'Very sensitive', impact: 'High' },
-      { id: 'somewhat-sensitive', label: 'Somewhat sensitive', impact: 'Medium' },
-      { id: 'rarely-sensitive', label: 'Rarely sensitive', impact: 'Low' },
-      { id: 'not-sensitive', label: 'Not sensitive', impact: 'None' }
+      { id: 'redness', label: 'Redness & irritation', impact: 'High' },
+      { id: 'dryness', label: 'Flaking & dryness', impact: 'High' },
+      { id: 'occasional', label: 'Occasional sensitivity', impact: 'Medium' },
+      { id: 'none', label: 'No sensitivity', impact: 'None' }
     ]
   },
   {
-    id: 'allergies',
-    question: 'Do you have any known allergies to skincare ingredients?',
+    id: 'texture',
+    question: 'What texture concerns do you have?',
     options: [
-      { id: 'fragrance', label: 'Fragrance sensitivity', impact: 'High' },
-      { id: 'preservatives', label: 'Preservative sensitivity', impact: 'High' },
-      { id: 'specific', label: 'Specific ingredients', impact: 'Medium' },
-      { id: 'none', label: 'No known allergies', impact: 'None' }
-    ]
-  },
-  {
-    id: 'retinol',
-    question: 'Have you used retinol products before?',
-    options: [
-      { id: 'regular', label: 'Yes, regularly', impact: 'None' },
-      { id: 'sometimes', label: 'Yes, occasionally', impact: 'Low' },
-      { id: 'tried', label: 'Tried once', impact: 'Medium' },
-      { id: 'never', label: 'Never used', impact: 'High' }
-    ]
-  },
-  {
-    id: 'acids',
-    question: 'How does your skin react to exfoliating acids?',
-    options: [
-      { id: 'well', label: 'Tolerates well', impact: 'None' },
-      { id: 'mild', label: 'Mild sensitivity', impact: 'Low' },
-      { id: 'moderate', label: 'Moderate sensitivity', impact: 'Medium' },
-      { id: 'severe', label: 'Severe sensitivity', impact: 'High' }
-    ]
-  },
-  {
-    id: 'natural',
-    question: 'Do you prefer natural/organic ingredients?',
-    options: [
-      { id: 'always', label: 'Always prefer natural', impact: 'High' },
-      { id: 'mostly', label: 'Mostly prefer natural', impact: 'Medium' },
-      { id: 'sometimes', label: 'Sometimes prefer natural', impact: 'Low' },
-      { id: 'no-preference', label: 'No preference', impact: 'None' }
+      { id: 'rough', label: 'Rough texture', impact: 'High' },
+      { id: 'enlarged-pores', label: 'Enlarged pores', impact: 'High' },
+      { id: 'mild-texture', label: 'Mild texture issues', impact: 'Medium' },
+      { id: 'none', label: 'No concerns', impact: 'None' }
     ]
   }
 ];
 
-export default function IngredientsQuizPage() {
+export default function ConcernsQuizPage() {
   const router = useRouter();
   const { state, dispatch } = useQuiz();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -73,7 +83,7 @@ export default function IngredientsQuizPage() {
   // Load saved answers if they exist
   useEffect(() => {
     const savedAnswers = state.answers.reduce((acc, answer) => {
-      if (answer.category === 'ingredients') {
+      if (answer.category === 'concerns') {
         acc[answer.questionId] = answer.selectedOption;
       }
       return acc;
@@ -90,7 +100,7 @@ export default function IngredientsQuizPage() {
     dispatch({
       type: 'ADD_ANSWER',
       payload: {
-        category: 'ingredients',
+        category: 'concerns',
         questionId,
         selectedOption: optionId,
         impact
@@ -99,14 +109,14 @@ export default function IngredientsQuizPage() {
   }, [dispatch]);
 
   const handleNext = useCallback(() => {
-    if (currentQuestionIndex < ingredientQuestions.length - 1) {
+    if (currentQuestionIndex < concernQuestions.length - 1) {
       setIsTransitioning(true);
       setTimeout(() => {
         setCurrentQuestionIndex(prev => prev + 1);
         setIsTransitioning(false);
       }, 300);
     } else {
-      router.push('/quiz/results');
+      router.push('/quiz/ingredients');
     }
   }, [currentQuestionIndex, router]);
 
@@ -118,21 +128,21 @@ export default function IngredientsQuizPage() {
         setIsTransitioning(false);
       }, 300);
     } else {
-      router.push('/quiz/concerns');
+      router.push('/quiz/lifestyle');
     }
   }, [currentQuestionIndex, router]);
 
-  const currentQuestion = ingredientQuestions[currentQuestionIndex];
-  const progress = ((currentQuestionIndex + 1) / ingredientQuestions.length) * 100;
+  const currentQuestion = concernQuestions[currentQuestionIndex];
+  const progress = ((currentQuestionIndex + 1) / concernQuestions.length) * 100;
 
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-gradient-to-b from-primary/10 to-primary/5 py-12">
         <div className="container max-w-4xl mx-auto px-4">
           <ProgressHeader 
-            title="Ingredient Sensitivity"
+            title="Skin Concerns"
             currentStep={currentQuestionIndex + 1}
-            totalSteps={ingredientQuestions.length}
+            totalSteps={concernQuestions.length}
             progress={progress}
           />
 
@@ -168,7 +178,7 @@ export default function IngredientsQuizPage() {
               disabled={!selectedAnswers[currentQuestion.id]}
               className="gap-2"
             >
-              {currentQuestionIndex === ingredientQuestions.length - 1 ? 'View Results' : 'Next'}
+              {currentQuestionIndex === concernQuestions.length - 1 ? 'Next Section' : 'Next'}
               <ArrowRight className="w-4 h-4" />
             </Button>
           </div>
