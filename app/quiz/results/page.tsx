@@ -1,149 +1,219 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useQuiz } from '@/contexts/quiz-context';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Heart, ArrowRight } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Share2, Download, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import ErrorBoundary from '@/components/error-boundary';
-import { useQuiz } from '@/contexts/quiz-context';
+import { useCallback, useMemo } from 'react';
 
-const impactScores = {
-  'Excellent': 100,
-  'Good': 75,
-  'Fair': 50,
-  'Poor': 25
-} as const;
-
-function getRecommendations(score: number) {
-  if (score < 50) {
-    return [
-      'Consider establishing a consistent sleep schedule',
-      'Increase water intake throughout the day',
-      'Try meditation or yoga for stress management',
-      'Reduce processed food consumption'
-    ];
-  } else if (score < 75) {
-    return [
-      'Fine-tune your bedtime routine',
-      'Add more fruits and vegetables to your diet',
-      'Schedule regular exercise sessions',
-      'Practice mindfulness daily'
-    ];
-  } else {
-    return [
-      'Maintain your healthy sleep schedule',
-      'Continue your balanced diet',
-      'Keep up with your stress management routine',
-      'Share your healthy habits with others'
-    ];
-  }
-}
-
-function QuizResults() {
-  const router = useRouter();
-  const { state, dispatch } = useQuiz();
-  const { answers } = state;
-
-  const score = useMemo(() => {
-    if (!answers.length) return 0;
-    const totalScore = answers.reduce((acc, answer) => 
-      acc + (impactScores[answer.impact as keyof typeof impactScores] || 0), 0
-    );
-    return Math.round(totalScore / answers.length);
-  }, [answers]);
-
-  const recommendations = useMemo(() => getRecommendations(score), [score]);
-
-  const handleRestart = () => {
-    dispatch({ type: 'RESET_QUIZ' });
-    router.push('/quiz/lifestyle');
-  };
-
-  useEffect(() => {
-    if (!answers.length) {
-      router.push('/quiz/lifestyle');
-    }
-  }, [answers.length, router]);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="max-w-4xl mx-auto bg-black rounded-lg shadow-lg p-8 text-white"
-    >
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 text-transparent bg-clip-text">
-          Quiz Results
-        </h1>
-        <p className="text-2xl text-purple-300">
-          Your Lifestyle Score: {score}
-        </p>
-      </div>
-
-      <div className="grid gap-8">
-        <div className="bg-zinc-900/50 p-6 rounded-lg border border-zinc-800">
-          <h2 className="text-2xl font-bold mb-4 text-blue-400">Feedback</h2>
-          <div className="flex items-start gap-3">
-            <div className="bg-purple-500/10 p-2 rounded-lg mt-1">
-              <Heart className="w-4 h-4 text-purple-400" />
-            </div>
-            <p className="text-lg text-zinc-300">
-              {score >= 90 
-                ? "Perfect! You have excellent lifestyle habits!" 
-                : score >= 75 
-                  ? "Great job! Your lifestyle choices support healthy habits." 
-                  : score >= 50
-                    ? "Good effort! Keep working on your lifestyle habits." 
-                    : "There's room for improvement in your lifestyle routine."}
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-zinc-900/50 p-6 rounded-lg border border-zinc-800">
-          <h2 className="text-2xl font-bold mb-4 text-blue-400">Recommendations</h2>
-          <ul className="space-y-4">
-            {recommendations.map((recommendation, index) => (
-              <li key={index} className="flex items-start gap-3">
-                <div className="bg-purple-500/10 p-2 rounded-lg mt-1">
-                  <ArrowRight className="w-4 h-4 text-purple-400" />
-                </div>
-                <p className="text-lg text-zinc-300">{recommendation}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="mt-8 flex justify-center gap-4">
-          <Button
-            onClick={handleRestart}
-            size="lg"
-            variant="outline"
-            className="gap-2 border-purple-500 text-purple-400 hover:bg-purple-500/10"
-          >
-            <ArrowRight className="w-4 h-4 rotate-180" />
-            Retake Quiz
-          </Button>
-          <Button
-            size="lg"
-            className="gap-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-            onClick={() => router.push('/quiz')}
-          >
-            View All Quizzes
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </Button>
-        </div>
-      </div>
-    </motion.div>
-  );
+interface RecommendedProduct {
+  name: string;
+  description: string;
+  type: string;
+  priority: number;
+  ingredients: string[];
+  benefits: string[];
 }
 
 export default function ResultsPage() {
+  const router = useRouter();
+  const { state } = useQuiz();
+
+  const analyzeAnswers = useCallback(() => {
+    const concerns = new Set<string>();
+    const sensitivities = new Set<string>();
+    let skinType = '';
+    let lifestyleImpact = 0;
+
+    state.answers.forEach(answer => {
+      if (answer.category === 'concerns') {
+        if (answer.questionId === 'skin-type') {
+          skinType = answer.selectedOption;
+        } else if (answer.impact === 'High') {
+          concerns.add(answer.questionId);
+        }
+      } else if (answer.category === 'ingredients') {
+        if (answer.impact === 'High') {
+          sensitivities.add(answer.selectedOption);
+        }
+      } else if (answer.category === 'lifestyle') {
+        lifestyleImpact += answer.impact === 'High' ? 2 : answer.impact === 'Medium' ? 1 : 0;
+      }
+    });
+
+    return { concerns, sensitivities, skinType, lifestyleImpact };
+  }, [state.answers]);
+
+  const recommendations = useMemo(() => {
+    const { concerns, sensitivities, skinType, lifestyleImpact } = analyzeAnswers();
+    const products: RecommendedProduct[] = [];
+
+    // Core cleanser recommendation
+    const cleanserType = skinType === 'oily' ? 'gel' : skinType === 'dry' ? 'cream' : 'gentle foam';
+    products.push({
+      name: `${cleanserType.charAt(0).toUpperCase() + cleanserType.slice(1)} Cleanser`,
+      description: `A gentle ${cleanserType} cleanser suitable for ${skinType} skin`,
+      type: 'Cleanser',
+      priority: 1,
+      ingredients: ['Glycerin', 'Panthenol'],
+      benefits: ['Removes impurities', 'Maintains skin barrier']
+    });
+
+    // Treatment recommendations based on concerns
+    if (concerns.has('acne')) {
+      products.push({
+        name: 'Clarifying Treatment',
+        description: 'Targeted treatment for breakout-prone skin',
+        type: 'Treatment',
+        priority: 2,
+        ingredients: ['Salicylic Acid', 'Niacinamide'],
+        benefits: ['Unclogs pores', 'Reduces inflammation']
+      });
+    }
+
+    if (concerns.has('aging')) {
+      products.push({
+        name: 'Anti-aging Serum',
+        description: 'Advanced formula for fine lines and firmness',
+        type: 'Serum',
+        priority: 2,
+        ingredients: ['Retinol', 'Peptides'],
+        benefits: ['Promotes collagen', 'Improves elasticity']
+      });
+    }
+
+    // Moisturizer recommendation
+    const moisturizerType = skinType === 'oily' ? 'light' : 'rich';
+    products.push({
+      name: `${moisturizerType.charAt(0).toUpperCase() + moisturizerType.slice(1)} Moisturizer`,
+      description: `${moisturizerType.charAt(0).toUpperCase() + moisturizerType.slice(1)} hydrating formula for ${skinType} skin`,
+      type: 'Moisturizer',
+      priority: 1,
+      ingredients: ['Hyaluronic Acid', 'Ceramides'],
+      benefits: ['Hydrates', 'Strengthens barrier']
+    });
+
+    // Additional treatments based on lifestyle
+    if (lifestyleImpact > 3) {
+      products.push({
+        name: 'Antioxidant Defense Serum',
+        description: 'Protection against environmental stressors',
+        type: 'Serum',
+        priority: 3,
+        ingredients: ['Vitamin C', 'Vitamin E'],
+        benefits: ['Protects from free radicals', 'Brightens complexion']
+      });
+    }
+
+    return products.sort((a, b) => a.priority - b.priority);
+  }, [analyzeAnswers]);
+
+  const handleShare = useCallback(() => {
+    // Implement sharing functionality
+  }, []);
+
+  const handleDownload = useCallback(() => {
+    // Implement PDF download functionality
+  }, []);
+
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gradient-to-b from-primary/10 to-primary/5 py-12 px-4">
-        <QuizResults />
+      <div className="min-h-screen bg-gradient-to-b from-primary/10 to-primary/5 py-12">
+        <div className="container max-w-4xl mx-auto px-4">
+          <div className="flex justify-between items-center mb-8">
+            <Button
+              variant="outline"
+              onClick={() => router.push('/quiz/ingredients')}
+              className="gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Quiz
+            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={handleShare} className="gap-2">
+                <Share2 className="w-4 h-4" />
+                Share
+              </Button>
+              <Button variant="outline" onClick={handleDownload} className="gap-2">
+                <Download className="w-4 h-4" />
+                Download PDF
+              </Button>
+            </div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h1 className="text-4xl font-bold text-center mb-8">Your Personalized Skincare Routine</h1>
+
+            <div className="grid gap-6">
+              {recommendations.map((product, index) => (
+                <motion.div
+                  key={product.name}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <Card className="p-6">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
+                        <p className="text-muted-foreground mb-4">{product.description}</p>
+                        
+                        <div className="space-y-4">
+                          <div>
+                            <h4 className="font-medium mb-2">Key Ingredients:</h4>
+                            <div className="flex flex-wrap gap-2">
+                              {product.ingredients.map(ingredient => (
+                                <span
+                                  key={ingredient}
+                                  className="px-3 py-1 bg-primary/10 rounded-full text-sm"
+                                >
+                                  {ingredient}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          <div>
+                            <h4 className="font-medium mb-2">Benefits:</h4>
+                            <ul className="list-disc list-inside space-y-1">
+                              {product.benefits.map(benefit => (
+                                <li key={benefit} className="text-muted-foreground">
+                                  {benefit}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <span className="text-sm font-medium text-muted-foreground">
+                        Step {index + 1}
+                      </span>
+                    </div>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="mt-12 text-center">
+              <p className="text-muted-foreground mb-6">
+                These recommendations are based on your quiz responses and are designed to address your specific skin concerns and lifestyle factors.
+              </p>
+              <Button
+                onClick={() => router.push('/')}
+                className="gap-2"
+              >
+                Return Home
+              </Button>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </ErrorBoundary>
   );

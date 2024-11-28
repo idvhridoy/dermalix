@@ -145,29 +145,36 @@ const reviews = [
 
 const heroImages = [
   {
-    url: 'https://images.unsplash.com/photo-1601412436009-d964bd02edbc',
+    url: 'https://images.unsplash.com/photo-1601412436009-d964bd02edbc?auto=format&fit=crop&q=80&w=2070',
     alt: 'Woman with glowing skin close-up'
   },
   {
-    url: 'https://images.unsplash.com/photo-1605462863863-10d9e47e15ee',
+    url: 'https://images.unsplash.com/photo-1576426863848-c21f53c60b19?auto=format&fit=crop&q=80&w=2070',
+    alt: 'Woman applying skincare product'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1605462863863-10d9e47e15ee?auto=format&fit=crop&q=80&w=2070',
     alt: 'Luxury skincare products on marble'
   },
   {
-    url: 'https://images.unsplash.com/photo-1616394584738-fc6e612e71b9',
+    url: 'https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&q=80&w=2070',
     alt: 'Woman applying face cream'
   },
   {
-    url: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273',
+    url: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?auto=format&fit=crop&q=80&w=2070',
     alt: 'Close-up of woman with perfect skin'
   },
   {
-    url: 'https://images.unsplash.com/photo-1597931752949-98c74b5b159f',
+    url: 'https://images.unsplash.com/photo-1597931752949-98c74b5b159f?auto=format&fit=crop&q=80&w=2070',
     alt: 'Natural skincare ingredients'
-  },
-  {
-    url: 'https://images.unsplash.com/photo-1512290923902-8a1dd7228f2d',
-    alt: 'Woman with radiant skin'
   }
+];
+
+const stats = [
+  { label: 'Happy Customers', value: '10,000+' },
+  { label: 'Products Sold', value: '50,000+' },
+  { label: 'Satisfaction Rate', value: '98%' },
+  { label: 'Expert Consultations', value: '5,000+' }
 ];
 
 const fadeInUp = {
@@ -185,6 +192,7 @@ export default function HomePage() {
   const [concernsRef, concernsInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [aiRef, aiInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [reviewsRef, reviewsInView] = useInView({ triggerOnce: true, threshold: 0.1 });
+  const [statsRef, statsInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentAnimation, setCurrentAnimation] = useState(0);
@@ -654,6 +662,36 @@ export default function HomePage() {
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section
+        ref={statsRef}
+        className="py-20 bg-primary/5"
+      >
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={fadeInUp.initial}
+            animate={statsInView ? fadeInUp.animate : {}}
+            transition={fadeInUp.transition}
+            className="grid grid-cols-2 md:grid-cols-4 gap-8"
+          >
+            {stats.map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={statsInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: index * 0.1 }}
+                className="text-center"
+              >
+                <h3 className="text-3xl md:text-4xl font-bold text-primary mb-2">
+                  {stat.value}
+                </h3>
+                <p className="text-muted-foreground">{stat.label}</p>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
     </div>

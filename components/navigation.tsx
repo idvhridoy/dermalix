@@ -87,13 +87,13 @@ const megaMenuContent: Record<string, MegaMenuContent> = {
     featured: [
       {
         title: 'Meet Our Team',
-        image: '/images/featured/team-lab.jpg',
+        image: 'https://images.unsplash.com/photo-1581056771107-24ca5f033842?auto=format&fit=crop&q=80&w=800&h=600',
         href: '/about/team'
       },
       {
         title: 'Latest Research',
         href: '/about/clinical-studies',
-        image: '/images/featured/research-lab.jpg'
+        image: 'https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?auto=format&fit=crop&q=80&w=800&h=600'
       }
     ]
   }
@@ -144,12 +144,15 @@ const MegaMenu: React.FC<MegaMenuProps> = ({ content, onClose }) => {
                 onClick={handleLinkClick}
                 className="block group relative overflow-hidden rounded-lg"
               >
-                <div className="relative h-48">
+                <div className="relative h-48 w-full">
                   <Image
                     src={item.image}
                     alt={item.title}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, 300px"
+                    priority
+                    quality={85}
                   />
                   <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors duration-300" />
                   <div className="absolute bottom-4 left-4">
@@ -221,13 +224,13 @@ export function Navigation() {
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-2">
               <Image
-                src="/logo.png"
+                src="/images/logo.svg"
                 alt="Dermalix Logo"
                 width={32}
                 height={32}
                 className="w-8 h-8"
               />
-              <span className="text-xl font-bold">Dermalix</span>
+              <span className="text-xl font-bold text-primary">Dermalix</span>
             </Link>
 
             {/* Desktop Navigation */}

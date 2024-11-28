@@ -9,6 +9,7 @@ import { useState, useCallback, useEffect } from 'react';
 import ErrorBoundary from '@/components/error-boundary';
 import { QuestionCard } from '@/components/quiz/question-card';
 import { ProgressHeader } from '@/components/quiz/progress-header';
+import { QuizProgress } from '@/components/quiz/quiz-progress';
 
 const lifestyleQuestions = [
   {
@@ -127,6 +128,7 @@ export default function LifestyleQuizPage() {
     <ErrorBoundary>
       <div className="min-h-screen bg-gradient-to-b from-primary/10 to-primary/5 py-12">
         <div className="container max-w-4xl mx-auto px-4">
+          <QuizProgress />
           <ProgressHeader 
             title="Lifestyle Assessment"
             currentStep={currentQuestionIndex + 1}
