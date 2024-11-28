@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ShoppingCart } from 'lucide-react';
+import Image from 'next/image';
 
 interface ProductCardProps {
   title: string;
@@ -17,9 +18,10 @@ export function ProductCard({ title, description, price, image, category }: Prod
   return (
     <Card className="overflow-hidden">
       <div className="aspect-square relative">
-        <img
+        <Image
           src={image}
           alt={title}
+          fill
           className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
         />
         <Badge className="absolute top-2 right-2">{category}</Badge>

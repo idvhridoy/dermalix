@@ -89,10 +89,12 @@ export default function PartnersPage() {
 
   return (
     <div className="container mx-auto py-16 px-4">
-      <h1 className="text-4xl font-bold text-center mb-8">Our Partners</h1>
-      <p className="text-lg text-center text-foreground/80 mb-12 max-w-2xl mx-auto">
-        We collaborate with leading institutions and organizations to push the boundaries of skincare innovation.
-      </p>
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold mb-4">Our Partners</h1>
+        <p className="text-lg text-muted-foreground">
+          We&apos;re proud to work with industry leaders who share our commitment to excellence
+        </p>
+      </div>
 
       <div className="space-y-16">
         {partners.map((category, index) => (
@@ -140,8 +142,8 @@ export default function PartnersPage() {
         <h2 className="text-2xl font-semibold mb-8">Partner With Us</h2>
         <div className="bg-background/50 rounded-lg p-8 border border-primary/10">
           <p className="text-foreground/70 mb-6">
-            We're always looking for innovative organizations to collaborate with in our mission to revolutionize skincare.
-            If you're interested in partnering with Dermalix, we'd love to hear from you.
+            We&apos;re always looking for innovative organizations to collaborate with in our mission to revolutionize skincare.
+            If you&apos;re interested in partnering with Dermalix, we&apos;d love to hear from you.
           </p>
           <button className="bg-primary text-white py-2 px-6 rounded-lg hover:bg-primary/90 transition-colors">
             Contact Us

@@ -269,9 +269,9 @@ export default function HomePage() {
 
   // Auto-slide functionality for hero section
   useEffect(() => {
-    const timer = setInterval(nextHeroSlide, 5000);
-    return () => clearInterval(timer);
-  }, []);
+    const interval = setInterval(nextHeroSlide, 5000);
+    return () => clearInterval(interval);
+  }, [nextHeroSlide]);
 
   return (
     <div className="min-h-screen">
@@ -460,7 +460,7 @@ export default function HomePage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
                   <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6">
-                    <h3 className="text-xl sm:text-2xl font-semibold text-white mb-2">{category.name}</h3>
+                    <h3 className="text-xl sm:text-2xl font-semibold">{category.name}</h3>
                     <Link href={category.href}>
                       <Button variant="ghost" className="text-white group-hover:translate-x-2 transition-transform text-sm sm:text-base">
                         Shop Now <ArrowRight className="ml-2 h-3 w-3 sm:h-4 sm:w-4" />

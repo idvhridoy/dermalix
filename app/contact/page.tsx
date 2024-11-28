@@ -1,9 +1,18 @@
 'use client';
 
-import { ContactForm } from '@/components/contact-form';
-import { FAQSection } from '@/components/faq-section';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function ContactPage() {
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-primary/5">
       <div className="container mx-auto px-4 py-16 max-w-7xl">
@@ -12,7 +21,7 @@ export default function ContactPage() {
             Contact Us
           </h1>
           <p className="text-xl text-foreground/80 max-w-2xl mx-auto">
-            We're here to help and answer any question you might have. We look forward to hearing from you.
+            We&apos;re here to help! Send us a message and we&apos;ll get back to you as soon as possible.
           </p>
         </div>
       
@@ -23,7 +32,29 @@ export default function ContactPage() {
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="relative z-10">
               <h2 className="text-2xl font-semibold mb-6 text-foreground">Send us a Message</h2>
-              <ContactForm />
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium mb-2">
+                    Name
+                  </label>
+                  <Input id="name" required />
+                </div>
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium mb-2">
+                    Email
+                  </label>
+                  <Input id="email" type="email" required />
+                </div>
+                <div>
+                  <label htmlFor="message" className="block text-sm font-medium mb-2">
+                    Message
+                  </label>
+                  <Textarea id="message" required className="min-h-[150px]" />
+                </div>
+                <Button type="submit" size="lg" className="w-full">
+                  Send Message
+                </Button>
+              </form>
             </div>
           </div>
 
@@ -79,7 +110,7 @@ export default function ContactPage() {
           <h2 className="text-3xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-primary">
             Frequently Asked Questions
           </h2>
-          <FAQSection />
+          {/* FAQSection */}
         </div>
       </div>
     </div>

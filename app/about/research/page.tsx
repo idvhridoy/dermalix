@@ -41,22 +41,26 @@ export default function ResearchPage() {
 
   return (
     <div className="container mx-auto py-16 px-4">
-      <h1 className="text-4xl font-bold text-center mb-8">Research & Development</h1>
-      <p className="text-lg text-center text-foreground/80 mb-12 max-w-2xl mx-auto">
-        At Dermalix, we're committed to advancing the science of skincare through innovative research and development.
-      </p>
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold mb-4">Our Research</h1>
+        <p className="text-lg text-muted-foreground">
+          We&apos;re committed to advancing skincare through scientific research and innovation
+        </p>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {researchAreas.map((area, index) => (
           <div
             key={index}
-            className="bg-background/50 rounded-lg p-6 border border-primary/10"
+            className="p-6 rounded-lg border bg-card"
           >
-            <h2 className="text-xl font-semibold mb-4">{area.title}</h2>
-            <p className="text-foreground/70 mb-6">{area.description}</p>
+            <h3 className="text-xl font-semibold mb-3">{area.title}</h3>
+            <p className="text-muted-foreground">
+              {area.description}
+            </p>
             <ul className="space-y-2">
               {area.points.map((point, pointIndex) => (
-                <li key={pointIndex} className="flex items-center text-foreground/70">
+                <li key={pointIndex} className="flex items-center text-muted-foreground">
                   <svg
                     className="w-5 h-5 text-primary mr-2"
                     fill="none"
@@ -81,25 +85,25 @@ export default function ResearchPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-4">
             <h3 className="text-xl font-medium">Discovery Phase</h3>
-            <p className="text-foreground/70">
+            <p className="text-muted-foreground">
               Our research begins with identifying key skincare challenges and exploring potential solutions through extensive literature review and preliminary studies.
             </p>
           </div>
           <div className="space-y-4">
             <h3 className="text-xl font-medium">Development</h3>
-            <p className="text-foreground/70">
+            <p className="text-muted-foreground">
               We develop and test multiple formulations, optimizing for efficacy, stability, and user experience through iterative improvements.
             </p>
           </div>
           <div className="space-y-4">
             <h3 className="text-xl font-medium">Clinical Testing</h3>
-            <p className="text-foreground/70">
-              Rigorous clinical trials validate our formulations' safety and effectiveness, ensuring they meet our high standards.
+            <p className="text-muted-foreground">
+              Rigorous clinical trials validate our formulations&apos; safety and effectiveness, ensuring they meet our high standards.
             </p>
           </div>
           <div className="space-y-4">
             <h3 className="text-xl font-medium">Quality Assurance</h3>
-            <p className="text-foreground/70">
+            <p className="text-muted-foreground">
               Comprehensive quality control measures ensure consistent product quality and compliance with regulatory standards.
             </p>
           </div>

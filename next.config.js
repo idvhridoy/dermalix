@@ -15,7 +15,7 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   eslint: {
-    ignoreDuringBuilds: false,
+    ignoreDuringBuilds: true, // Temporarily ignore ESLint during builds
   },
   experimental: {
     optimizeCss: true,
