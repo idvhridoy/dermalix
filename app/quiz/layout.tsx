@@ -14,66 +14,51 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 
-const quizTypes = [
+type QuizType = {
+  id: string;
+  name: string;
+  description: string;
+  icon: React.FC<{ className?: string }>;
+  path: string;
+};
+
+const quizTypes: QuizType[] = [
   {
     id: "skin-analysis",
     name: "Skin Analysis Quiz",
     description: "Get a detailed analysis of your skin type and concerns",
-    iconName: "skin",
+    icon: SkinIcon,
     path: "/quiz"
   },
   {
     id: "lifestyle",
     name: "Lifestyle Assessment",
     description: "Understand how your lifestyle affects your skin",
-    iconName: "activity",
+    icon: ActivityIcon,
     path: "/quiz/lifestyle"
   },
   {
     id: "ingredients",
     name: "Ingredient Knowledge",
     description: "Test your skincare ingredient knowledge",
-    iconName: "leaf",
+    icon: LeafIcon,
     path: "/quiz/ingredients"
   },
   {
     id: "routine",
     name: "Routine Builder",
     description: "Build your perfect skincare routine",
-    iconName: "droplet",
+    icon: DropletIcon,
     path: "/quiz/routine"
   },
   {
     id: "expert",
     name: "Expert Level Quiz",
     description: "Advanced skincare knowledge test",
-    iconName: "brain",
+    icon: BrainIcon,
     path: "/quiz/expert"
   }
 ];
-
-type IconName = 'skin' | 'activity' | 'leaf' | 'droplet' | 'brain';
-
-interface IconComponentProps {
-  name: IconName;
-}
-
-const IconComponent: React.FC<IconComponentProps> = ({ name }) => {
-  switch (name) {
-    case 'skin':
-      return <SkinIcon className="w-5 h-5" />;
-    case 'activity':
-      return <ActivityIcon className="w-5 h-5" />;
-    case 'leaf':
-      return <LeafIcon className="w-5 h-5" />;
-    case 'droplet':
-      return <DropletIcon className="w-5 h-5" />;
-    case 'brain':
-      return <BrainIcon className="w-5 h-5" />;
-    default:
-      return <SkinIcon className="w-5 h-5" />;
-  }
-};
 
 export default function QuizLayout({
   children,
@@ -93,91 +78,66 @@ export default function QuizLayout({
         variant="ghost" 
         size="icon" 
         onClick={toggleMobileSidebar}
-        className={`
-          fixed top-4 right-4 z-50 
-          lg:hidden 
-          bg-background/80 backdrop-blur-md 
-          hover:bg-primary/10 
-          w-12 h-12 rounded-full 
-          shadow-lg 
-          transition-all duration-300
-          ${isMobileSidebarOpen ? 'rotate-90' : ''}
-        `}
+        className="fixed top-4 right-4 z-50 lg:hidden bg-background/80 backdrop-blur-md hover:bg-primary/10 w-12 h-12 rounded-full"
       >
-        {isMobileSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        {isMobileSidebarOpen ? (
+          <X className="w-6 h-6" />
+        ) : (
+          <Menu className="w-6 h-6" />
+        )}
       </Button>
 
-      {/* Mobile Sidebar Overlay */}
-      <AnimatePresence>
-        {isMobileSidebarOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-background/95 backdrop-blur-md z-40 lg:hidden overflow-y-auto"
-          >
-            <div className="container mx-auto px-4 py-8 mt-16">
-              <div className="space-y-4">
-                <h2 className="text-2xl font-semibold mb-6 text-center">Quiz Types</h2>
-                {quizTypes.map((quiz) => (
-                  <Link key={quiz.id} href={quiz.path} onClick={toggleMobileSidebar}>
-                    <div 
-                      className={`
-                        bg-primary/5 rounded-xl p-4 
-                        border border-transparent 
-                        hover:border-primary/30 
-                        transition-all duration-300 
-                        cursor-pointer 
-                        group
-                        flex items-center
-                        space-x-4
-                      `}
-                    >
-                      <div className="bg-primary/10 p-2 rounded-lg">
-                        <IconComponent name={quiz.iconName} />
-                      </div>
-                      <div>
-                        <div className="font-medium text-lg">{quiz.name}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {quiz.description}
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Desktop Sidebar */}
-      <div className="hidden lg:block w-80 bg-background border-r border-border p-6">
-        <div className="space-y-2">
-          <h2 className="text-lg font-semibold mb-4">Quiz Types</h2>
+      <div className="hidden lg:flex w-80 bg-background/80 backdrop-blur-md border-r border-primary/10 p-6 flex-col gap-6">
+        <div className="space-y-6">
           {quizTypes.map((quiz) => (
-            <Link key={quiz.id} href={quiz.path}>
-              <Button
-                variant="ghost"
-                className="w-full justify-start gap-3 h-auto py-4"
-              >
-                <div className="bg-primary/10 p-2 rounded-lg">
-                  <IconComponent name={quiz.iconName} />
-                </div>
-                <div className="text-left">
-                  <div className="font-medium">{quiz.name}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {quiz.description}
-                  </div>
-                </div>
-              </Button>
+            <Link 
+              key={quiz.id}
+              href={quiz.path}
+              className="flex items-start gap-4 p-4 rounded-lg hover:bg-primary/5 transition-colors"
+            >
+              <quiz.icon className="w-5 h-5 mt-1 text-primary" />
+              <div>
+                <h3 className="font-medium">{quiz.name}</h3>
+                <p className="text-sm text-muted-foreground">{quiz.description}</p>
+              </div>
             </Link>
           ))}
         </div>
       </div>
 
+      {/* Mobile Sidebar */}
+      <AnimatePresence>
+        {isMobileSidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            transition={{ type: 'spring', damping: 20 }}
+            className="fixed inset-y-0 right-0 w-80 bg-background/95 backdrop-blur-md border-l border-primary/10 p-6 z-40 lg:hidden"
+          >
+            <div className="space-y-6 mt-16">
+              {quizTypes.map((quiz) => (
+                <Link 
+                  key={quiz.id}
+                  href={quiz.path}
+                  onClick={() => setIsMobileSidebarOpen(false)}
+                  className="flex items-start gap-4 p-4 rounded-lg hover:bg-primary/5 transition-colors"
+                >
+                  <quiz.icon className="w-5 h-5 mt-1 text-primary" />
+                  <div>
+                    <h3 className="font-medium">{quiz.name}</h3>
+                    <p className="text-sm text-muted-foreground">{quiz.description}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Main Content */}
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1">
         {children}
       </div>
     </div>
