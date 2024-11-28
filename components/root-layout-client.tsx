@@ -17,23 +17,21 @@ export function RootLayoutClient({
   const pathname = usePathname();
 
   return (
-    <body className={inter.className}>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <QuizProvider>
-          <div className="relative min-h-screen">
-            <Navigation />
-            <main className="relative">
-              {children}
-            </main>
-            <Footer />
-          </div>
-        </QuizProvider>
-      </ThemeProvider>
-    </body>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <QuizProvider>
+        <div className="relative min-h-screen">
+          <Navigation />
+          <main className="relative">
+            {children}
+          </main>
+          <Footer />
+        </div>
+      </QuizProvider>
+    </ThemeProvider>
   );
 }

@@ -1,24 +1,19 @@
 export interface QuizQuestion {
+  id: string;
   question: string;
-  options: string[] | QuizOption[];
-  correctAnswer?: number;
+  options: QuizOption[];
 }
 
 export interface QuizOption {
-  text: string;
-  impact: 'Poor' | 'Fair' | 'Good' | 'Excellent';
-}
-
-export interface LifestyleQuestions {
-  sleep: QuizQuestion[];
-  diet: QuizQuestion[];
-  stress: QuizQuestion[];
-  [key: string]: QuizQuestion[];
+  id: string;
+  label: string;
+  impact: 'High' | 'Medium' | 'Low' | 'None';
 }
 
 export interface QuizResult {
   score?: number;
   answers: QuizAnswer[];
+  recommendations?: string[];
 }
 
 export interface QuizAnswer {
@@ -28,4 +23,13 @@ export interface QuizAnswer {
   impact: string;
 }
 
-export type CategoryType = 'sleep' | 'diet' | 'stress' | 'concerns' | 'ingredients';
+export type CategoryType = 'lifestyle' | 'concerns' | 'ingredients' | 'routine' | 'expert';
+
+export interface QuizState {
+  currentCategory: CategoryType;
+  currentQuestion: number;
+  answers: QuizAnswer[];
+  isLoading: boolean;
+  error: string | null;
+  progress: number;
+}

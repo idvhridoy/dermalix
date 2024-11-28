@@ -1,14 +1,7 @@
-import { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
-import type { QuizResult, CategoryType, QuizAnswer } from '@/types/quiz';
+'use client';
 
-interface QuizState {
-  currentCategory: CategoryType;
-  currentQuestion: number;
-  answers: QuizAnswer[];
-  isLoading: boolean;
-  error: string | null;
-  progress: number;
-}
+import { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
+import type { QuizState, CategoryType, QuizAnswer } from '@/types/quiz';
 
 type QuizAction =
   | { type: 'SET_CATEGORY'; payload: CategoryType }
@@ -20,7 +13,7 @@ type QuizAction =
   | { type: 'RESET_QUIZ' };
 
 const initialState: QuizState = {
-  currentCategory: 'sleep',
+  currentCategory: 'lifestyle',
   currentQuestion: 0,
   answers: [],
   isLoading: false,
@@ -42,7 +35,16 @@ function quizReducer(state: QuizState, action: QuizAction): QuizState {
     case 'SET_QUESTION':
       return { ...state, currentQuestion: action.payload };
     case 'ADD_ANSWER':
-      return { ...state, answers: [...state.answers, action.payload] };
+      const existingAnswerIndex = state.answers.findIndex(
+        answer => answer.category === action.payload.category && answer.questionId === action.payload.questionId
+      );
+      const newAnswers = [...state.answers];
+      if (existingAnswerIndex !== -1) {
+        newAnswers[existingAnswerIndex] = action.payload;
+      } else {
+        newAnswers.push(action.payload);
+      }
+      return { ...state, answers: newAnswers };
     case 'SET_LOADING':
       return { ...state, isLoading: action.payload };
     case 'SET_ERROR':
@@ -60,25 +62,20 @@ export function QuizProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(quizReducer, initialState);
 
   const saveProgress = useCallback(() => {
-    try {
+    if (typeof window !== 'undefined') {
       localStorage.setItem('quizState', JSON.stringify(state));
-    } catch (error) {
-      console.error('Failed to save quiz progress:', error);
     }
   }, [state]);
 
   const loadProgress = useCallback(() => {
-    try {
+    if (typeof window !== 'undefined') {
       const savedState = localStorage.getItem('quizState');
       if (savedState) {
         const parsedState = JSON.parse(savedState);
-        Object.entries(parsedState).forEach(([key, value]) => {
-          dispatch({ type: ('SET_' + key.toUpperCase()) as any, payload: value });
+        Object.keys(parsedState).forEach(key => {
+          dispatch({ type: `SET_${key.toUpperCase()}` as any, payload: parsedState[key] });
         });
       }
-    } catch (error) {
-      console.error('Failed to load quiz progress:', error);
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to load saved progress' });
     }
   }, []);
 
