@@ -40,7 +40,7 @@ export function Footer() {
       <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary to-transparent opacity-50" />
 
       <div className="container mx-auto py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center md:text-left">
           {/* Company Info */}
           <motion.div variants={itemVariants} className="space-y-4">
             <h3 className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary neon-text">
@@ -49,7 +49,7 @@ export function Footer() {
             <p className="text-sm text-foreground/70">
               Revolutionizing skincare through science and innovation. Your journey to radiant skin begins here.
             </p>
-            <div className="flex space-x-4">
+            <div className="flex justify-center md:justify-start space-x-4">
               {[
                 { icon: Facebook, href: '#' },
                 { icon: Twitter, href: '#' },
@@ -83,6 +83,7 @@ export function Footer() {
                   key={index}
                   whileHover={{ x: 5 }}
                   transition={{ duration: 0.2 }}
+                  className="flex justify-center md:justify-start"
                 >
                   <Link 
                     href={link.href}
@@ -109,6 +110,7 @@ export function Footer() {
                   key={index}
                   whileHover={{ x: 5 }}
                   transition={{ duration: 0.2 }}
+                  className="flex justify-center md:justify-start"
                 >
                   <Link 
                     href={link.href}
@@ -132,11 +134,11 @@ export function Footer() {
               ].map((item, index) => (
                 <motion.li
                   key={index}
-                  className="flex items-start space-x-2 text-sm text-foreground/70"
+                  className="flex items-center justify-center md:justify-start space-x-2 text-sm text-foreground/70"
                   whileHover={{ x: 5 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <item.icon className="w-4 h-4 mt-1 text-primary" />
+                  <item.icon className="w-4 h-4 text-primary" />
                   <span>{item.content}</span>
                 </motion.li>
               ))}
@@ -150,7 +152,7 @@ export function Footer() {
           className="mt-12 pt-8 border-t border-primary/20 text-center"
         >
           <p className="text-sm text-foreground/50">
-            © 2024 Dermalix. All rights reserved. 
+            2024 Dermalix. All rights reserved. 
             <span className="mx-2">|</span>
             Crafted with 
             <motion.span
@@ -158,7 +160,7 @@ export function Footer() {
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 1, repeat: Infinity }}
             >
-              ♥
+              
             </motion.span>
             for better skin
           </p>

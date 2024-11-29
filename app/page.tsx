@@ -245,10 +245,10 @@ export default function HomePage() {
                     src={heroImages[currentSlide].url}
                     alt={heroImages[currentSlide].alt}
                     fill
-                    className="object-cover"
                     priority
+                    className="object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/50 to-background/95" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-background/75 via-background/40 to-background/75" />
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -325,42 +325,46 @@ export default function HomePage() {
             {/* Shop by Concern Section */}
             <section
               ref={concernsRef}
-              className="py-20 bg-background/50 backdrop-blur-sm"
+              className="py-20 bg-background/95 backdrop-blur-lg relative z-10"
             >
               <div className="container mx-auto px-4">
                 <motion.div
                   initial={fadeInUp.initial}
                   animate={concernsInView ? fadeInUp.animate : {}}
-                  transition={fadeInUp.transition}
                   className="text-center mb-12"
                 >
                   <h2 className="text-3xl font-bold mb-4">Shop by Concern</h2>
-                  <p className="text-foreground/70">Target your specific skincare needs</p>
+                  <p className="text-foreground/90">Find the perfect solution for your skin concerns</p>
                 </motion.div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 sm:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {concerns.map((concern, index) => (
                     <motion.div
                       key={concern.name}
-                      initial={fadeInUp.initial}
-                      animate={concernsInView ? fadeInUp.animate : {}}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={concernsInView ? { opacity: 1, y: 0 } : {}}
                       transition={{ delay: index * 0.1 }}
-                      className="group relative p-4 sm:p-6 rounded-2xl border border-primary/10 hover:border-primary/30 transition-colors overflow-hidden"
+                      className="group relative p-6 sm:p-8 rounded-2xl border border-primary/10 hover:border-primary/50 transition-all duration-300 overflow-hidden min-h-[320px] sm:min-h-[360px] bg-background/80 backdrop-blur-sm hover:shadow-[0_0_30px_rgba(var(--primary-rgb),0.3)] hover:bg-background/90"
                     >
-                      <div className="relative w-full h-24 sm:h-32 mb-4 rounded-lg overflow-hidden">
-                        <Image
-                          src={concern.image}
-                          alt={concern.name}
-                          fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-110"
-                        />
-                      </div>
-                      <h3 className="text-base sm:text-lg font-medium mb-2 text-center">{concern.name}</h3>
-                      <Link href={concern.href}>
-                        <Button variant="ghost" className="w-full group-hover:text-primary text-xs sm:text-sm">
-                          Learn More
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="relative z-10">
+                        <div className="relative w-full h-32 sm:h-40 mb-6 rounded-xl overflow-hidden">
+                          <Image
+                            src={concern.image}
+                            alt={concern.name}
+                            fill
+                            className="object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
+                        </div>
+                        <h3 className="text-lg sm:text-xl font-semibold mb-3 group-hover:text-primary transition-colors duration-300">{concern.name}</h3>
+                        <p className="text-foreground/80 text-sm sm:text-base mb-4">{concern.description}</p>
+                        <Button
+                          variant="ghost"
+                          className="w-full group-hover:bg-primary/10 transition-colors duration-300"
+                        >
+                          Explore Solutions
                         </Button>
-                      </Link>
+                      </div>
                     </motion.div>
                   ))}
                 </div>
