@@ -201,10 +201,26 @@ export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentAnimation, setCurrentAnimation] = useState(0);
 
+  // Auto-slide functionality for hero section
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const nextHeroSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+  };
+
+  const prevHeroSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + heroImages.length) % heroImages.length);
+  };
+
   return (
     <ScrollProgressProvider>
       {(progress) => (
-        <div className="relative min-h-screen" style={{ opacity: 1 - progress * 2 }}>
+        <div className="relative min-h-screen bg-background">
           <MouseTrailEffect />
           <InteractiveParticles />
           
@@ -212,19 +228,17 @@ export default function HomePage() {
           <section 
             ref={heroRef}
             className="min-h-[70vh] relative flex items-center overflow-hidden pt-20"
+            style={{ opacity: 1 - progress * 0.5 }}
           >
             {/* Background Slider */}
             <div className="absolute inset-0">
-              <AnimatePresence initial={false} mode="wait">
+              <AnimatePresence mode="wait">
                 <motion.div
                   key={currentSlide}
                   initial={{ opacity: 0, scale: 1.1 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ 
-                    duration: 0.7,
-                    ease: [0.4, 0, 0.2, 1]
-                  }}
+                  transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
                   className="relative w-full h-full"
                 >
                   <Image
@@ -234,12 +248,7 @@ export default function HomePage() {
                     className="object-cover"
                     priority
                   />
-                  <motion.div 
-                    className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/50 to-background/95"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/50 to-background/95" />
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -276,7 +285,7 @@ export default function HomePage() {
 
             {/* Arrow Controls */}
             <button
-              onClick={() => setCurrentAnimation((prev) => (prev + 1) % 5)}
+              onClick={prevHeroSlide}
               className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/80 border border-primary/20 
                        hover:bg-background hover:border-primary/40 transition-all duration-300 backdrop-blur-sm
                        group z-20"
@@ -285,7 +294,7 @@ export default function HomePage() {
               <ChevronRight className="w-6 h-6 rotate-180 text-primary group-hover:-translate-x-0.5 transition-transform" />
             </button>
             <button
-              onClick={() => setCurrentAnimation((prev) => (prev + 1) % 5)}
+              onClick={nextHeroSlide}
               className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/80 border border-primary/20 
                        hover:bg-background hover:border-primary/40 transition-all duration-300 backdrop-blur-sm
                        group z-20"
@@ -311,319 +320,323 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* Shop by Concern Section */}
-          <section
-            ref={concernsRef}
-            className="py-20 bg-background/50 backdrop-blur-sm"
-          >
-            <div className="container mx-auto px-4">
-              <motion.div
-                initial={fadeInUp.initial}
-                animate={concernsInView ? fadeInUp.animate : {}}
-                transition={fadeInUp.transition}
-                className="text-center mb-12"
-              >
-                <h2 className="text-3xl font-bold mb-4">Shop by Concern</h2>
-                <p className="text-foreground/70">Target your specific skincare needs</p>
-              </motion.div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 sm:gap-6">
-                {concerns.map((concern, index) => (
-                  <motion.div
-                    key={concern.name}
-                    initial={fadeInUp.initial}
-                    animate={concernsInView ? fadeInUp.animate : {}}
-                    transition={{ delay: index * 0.1 }}
-                    className="group relative p-4 sm:p-6 rounded-2xl border border-primary/10 hover:border-primary/30 transition-colors overflow-hidden"
-                  >
-                    <div className="relative w-full h-24 sm:h-32 mb-4 rounded-lg overflow-hidden">
-                      <Image
-                        src={concern.image}
-                        alt={concern.name}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-110"
-                      />
-                    </div>
-                    <h3 className="text-base sm:text-lg font-medium mb-2 text-center">{concern.name}</h3>
-                    <Link href={concern.href}>
-                      <Button variant="ghost" className="w-full group-hover:text-primary text-xs sm:text-sm">
-                        Learn More
-                      </Button>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Categories Section */}
-          <section
-            ref={categoriesRef}
-            className="py-20 bg-background/50 backdrop-blur-sm"
-          >
-            <div className="container mx-auto px-4">
-              <motion.div
-                initial={fadeInUp.initial}
-                animate={categoriesInView ? fadeInUp.animate : {}}
-                transition={fadeInUp.transition}
-                className="text-center mb-12"
-              >
-                <h2 className="text-3xl font-bold mb-4">Shop By Category</h2>
-                <p className="text-foreground/70">Find the perfect products for your skincare routine</p>
-              </motion.div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-                {categories.map((category, index) => (
-                  <motion.div
-                    key={category.name}
-                    initial={fadeInUp.initial}
-                    animate={categoriesInView ? fadeInUp.animate : {}}
-                    transition={{ delay: index * 0.1 }}
-                    className="group relative overflow-hidden rounded-2xl"
-                  >
-                    <div className="relative h-48 sm:h-64 lg:h-80">
-                      <Image
-                        src={category.image}
-                        alt={category.name}
-                        fill
-                        className="object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
-                      <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6">
-                        <h3 className="text-xl sm:text-2xl font-semibold">{category.name}</h3>
-                        <Link href={category.href}>
-                          <Button variant="ghost" className="text-white group-hover:translate-x-2 transition-transform text-sm sm:text-base">
-                            Shop Now <ArrowRight className="ml-2 h-3 w-3 sm:h-4 sm:w-4" />
-                          </Button>
-                        </Link>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Top Products Section */}
-          <section
-            ref={productsRef}
-            className="py-20"
-          >
-            <div className="container mx-auto px-4">
-              <motion.div
-                initial={fadeInUp.initial}
-                animate={productsInView ? fadeInUp.animate : {}}
-                transition={fadeInUp.transition}
-                className="text-center mb-12"
-              >
-                <h2 className="text-3xl font-bold mb-4">Best Sellers</h2>
-                <p className="text-foreground/70">Our most loved products</p>
-              </motion.div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {topProducts.map((product, index) => (
-                  <motion.div
-                    key={product.name}
-                    initial={fadeInUp.initial}
-                    animate={productsInView ? fadeInUp.animate : {}}
-                    transition={{ delay: index * 0.1 }}
-                    className="group bg-background/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-primary/10"
-                  >
-                    <div className="relative h-64">
-                      <Image
-                        src={product.image}
-                        alt={product.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
-                      <p className="text-foreground/70 mb-4">{product.description}</p>
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="text-xl font-bold">{product.price}</span>
-                        <div className="flex items-center">
-                          <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                          <span className="ml-1 text-sm">{product.rating}</span>
-                          <span className="ml-1 text-sm text-foreground/70">({product.reviews})</span>
-                        </div>
-                      </div>
-                      <Button className="w-full">Add to Cart</Button>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* AI Skin Analysis Section */}
-          <section
-            ref={aiRef}
-            className="py-20"
-          >
-            <div className="container mx-auto px-4">
-              <div className="grid md:grid-cols-2 gap-12 items-center">
+          {/* Other sections */}
+          <div style={{ opacity: Math.max(0.3, 1 - progress) }}>
+            {/* Shop by Concern Section */}
+            <section
+              ref={concernsRef}
+              className="py-20 bg-background/50 backdrop-blur-sm"
+            >
+              <div className="container mx-auto px-4">
                 <motion.div
                   initial={fadeInUp.initial}
-                  animate={aiInView ? fadeInUp.animate : {}}
+                  animate={concernsInView ? fadeInUp.animate : {}}
+                  transition={fadeInUp.transition}
+                  className="text-center mb-12"
                 >
-                  <h2 className="text-3xl font-bold mb-6">AI-Powered Skin Analysis</h2>
-                  <p className="text-foreground/70 mb-8">
-                    Get personalized skincare recommendations based on advanced AI analysis of your skin's unique characteristics.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Link href="/analysis">
-                      <Button size="lg" className="group">
-                        <Brain className="mr-2 h-5 w-5" />
-                        Start Analysis
-                      </Button>
-                    </Link>
-                    <Button size="lg" variant="outline">
-                      Learn More
-                    </Button>
-                  </div>
+                  <h2 className="text-3xl font-bold mb-4">Shop by Concern</h2>
+                  <p className="text-foreground/70">Target your specific skincare needs</p>
                 </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={aiInView ? { opacity: 1, x: 0 } : {}}
-                  className="relative h-[500px] rounded-2xl overflow-hidden"
-                >
-                  <Image
-                    src="https://plus.unsplash.com/premium_photo-1683121718643-fb18d2668d53?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    alt="AI Skin Analysis"
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 mix-blend-overlay" />
-                </motion.div>
-              </div>
-            </div>
-          </section>
 
-          {/* Reviews Section */}
-          <section
-            ref={reviewsRef}
-            className="py-20 bg-background/50 backdrop-blur-sm overflow-hidden"
-          >
-            <div className="container mx-auto px-4">
-              <motion.div
-                initial={fadeInUp.initial}
-                animate={reviewsInView ? fadeInUp.animate : {}}
-                transition={fadeInUp.transition}
-                className="text-center mb-12"
-              >
-                <h2 className="text-3xl font-bold mb-4">What Our Customers Say</h2>
-                <p className="text-foreground/70">Real results from real people</p>
-              </motion.div>
-
-              <div className="relative overflow-x-hidden">
-                <motion.div
-                  className="flex transition-all duration-500 ease-in-out"
-                  animate={{
-                    x: `${-currentIndex * (window.innerWidth < 640 ? 100 : 33.333)}%`
-                  }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                >
-                  {reviews.map((review, index) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 sm:gap-6">
+                  {concerns.map((concern, index) => (
                     <motion.div
-                      key={review.name}
-                      className="w-full sm:w-1/3 flex-shrink-0 px-2 sm:px-4"
+                      key={concern.name}
                       initial={fadeInUp.initial}
-                      animate={reviewsInView ? fadeInUp.animate : {}}
+                      animate={concernsInView ? fadeInUp.animate : {}}
                       transition={{ delay: index * 0.1 }}
+                      className="group relative p-4 sm:p-6 rounded-2xl border border-primary/10 hover:border-primary/30 transition-colors overflow-hidden"
                     >
-                      <div className="bg-background/80 backdrop-blur-sm p-4 sm:p-6 rounded-2xl border border-primary/10 h-full">
-                        <div className="flex items-center mb-4">
-                          <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden mr-3 sm:mr-4">
-                            <Image
-                              src={review.image}
-                              alt={review.name}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                          <div>
-                            <h3 className="text-sm sm:text-base font-semibold">{review.name}</h3>
-                            <p className="text-xs sm:text-sm text-muted-foreground">{review.role}</p>
-                            <div className="flex">
-                              {Array.from({ length: review.rating }).map((_, i) => (
-                                <Star key={i} className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-400 fill-yellow-400" />
-                              ))}
-                            </div>
-                          </div>
+                      <div className="relative w-full h-24 sm:h-32 mb-4 rounded-lg overflow-hidden">
+                        <Image
+                          src={concern.image}
+                          alt={concern.name}
+                          fill
+                          className="object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                      </div>
+                      <h3 className="text-base sm:text-lg font-medium mb-2 text-center">{concern.name}</h3>
+                      <Link href={concern.href}>
+                        <Button variant="ghost" className="w-full group-hover:text-primary text-xs sm:text-sm">
+                          Learn More
+                        </Button>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* Categories Section */}
+            <section
+              ref={categoriesRef}
+              className="py-20 bg-background/50 backdrop-blur-sm"
+            >
+              <div className="container mx-auto px-4">
+                <motion.div
+                  initial={fadeInUp.initial}
+                  animate={categoriesInView ? fadeInUp.animate : {}}
+                  transition={fadeInUp.transition}
+                  className="text-center mb-12"
+                >
+                  <h2 className="text-3xl font-bold mb-4">Shop By Category</h2>
+                  <p className="text-foreground/70">Find the perfect products for your skincare routine</p>
+                </motion.div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                  {categories.map((category, index) => (
+                    <motion.div
+                      key={category.name}
+                      initial={fadeInUp.initial}
+                      animate={categoriesInView ? fadeInUp.animate : {}}
+                      transition={{ delay: index * 0.1 }}
+                      className="group relative overflow-hidden rounded-2xl"
+                    >
+                      <div className="relative h-48 sm:h-64 lg:h-80">
+                        <Image
+                          src={category.image}
+                          alt={category.name}
+                          fill
+                          className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
+                        <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6">
+                          <h3 className="text-xl sm:text-2xl font-semibold">{category.name}</h3>
+                          <Link href={category.href}>
+                            <Button variant="ghost" className="text-white group-hover:translate-x-2 transition-transform text-sm sm:text-base">
+                              Shop Now <ArrowRight className="ml-2 h-3 w-3 sm:h-4 sm:w-4" />
+                            </Button>
+                          </Link>
                         </div>
-                        <p className="text-xs sm:text-sm text-foreground/70">{review.review}</p>
                       </div>
                     </motion.div>
                   ))}
+                </div>
+              </div>
+            </section>
+
+            {/* Top Products Section */}
+            <section
+              ref={productsRef}
+              className="py-20"
+            >
+              <div className="container mx-auto px-4">
+                <motion.div
+                  initial={fadeInUp.initial}
+                  animate={productsInView ? fadeInUp.animate : {}}
+                  transition={fadeInUp.transition}
+                  className="text-center mb-12"
+                >
+                  <h2 className="text-3xl font-bold mb-4">Best Sellers</h2>
+                  <p className="text-foreground/70">Our most loved products</p>
                 </motion.div>
 
-                {/* Navigation Dots */}
-                <div className="flex justify-center mt-6 gap-2">
-                  {[0, 1, 2].map((index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentIndex(index * 3)}
-                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                        Math.floor(currentIndex / 3) === index 
-                          ? 'bg-primary w-4' 
-                          : 'bg-primary/30 hover:bg-primary/50'
-                      }`}
-                      aria-label={`Go to review group ${index + 1}`}
-                    />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {topProducts.map((product, index) => (
+                    <motion.div
+                      key={product.name}
+                      initial={fadeInUp.initial}
+                      animate={productsInView ? fadeInUp.animate : {}}
+                      transition={{ delay: index * 0.1 }}
+                      className="group bg-background/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-primary/10"
+                    >
+                      <div className="relative h-64">
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="p-6">
+                        <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
+                        <p className="text-foreground/70 mb-4">{product.description}</p>
+                        <div className="flex items-center justify-between mb-4">
+                          <span className="text-xl font-bold">{product.price}</span>
+                          <div className="flex items-center">
+                            <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+                            <span className="ml-1 text-sm">{product.rating}</span>
+                            <span className="ml-1 text-sm text-foreground/70">({product.reviews})</span>
+                          </div>
+                        </div>
+                        <Button className="w-full">Add to Cart</Button>
+                      </div>
+                    </motion.div>
                   ))}
                 </div>
-
-                {/* Navigation Buttons */}
-                <button
-                  onClick={() => setCurrentIndex(currentIndex - 3)}
-                  className="hidden sm:block absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 border border-primary/20 
-                           hover:bg-background hover:border-primary/40 transition-all duration-300"
-                  disabled={currentIndex === 0}
-                >
-                  <ChevronRight className="w-5 h-5 rotate-180" />
-                </button>
-                <button
-                  onClick={() => setCurrentIndex(currentIndex + 3)}
-                  className="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 border border-primary/20 
-                           hover:bg-background hover:border-primary/40 transition-all duration-300"
-                  disabled={currentIndex >= 6}
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
               </div>
-            </div>
-          </section>
+            </section>
 
-          {/* Stats Section */}
-          <section
-            ref={statsRef}
-            className="py-20 bg-primary/5"
-          >
-            <div className="container mx-auto px-4">
-              <motion.div
-                initial={fadeInUp.initial}
-                animate={statsInView ? fadeInUp.animate : {}}
-                transition={fadeInUp.transition}
-                className="grid grid-cols-2 md:grid-cols-4 gap-8"
-              >
-                {stats.map((stat, index) => (
+            {/* AI Skin Analysis Section */}
+            <section
+              ref={aiRef}
+              className="py-20 bg-background/95 backdrop-blur-lg relative z-10"
+            >
+              <div className="container mx-auto px-4">
+                <div className="grid md:grid-cols-2 gap-12 items-center">
                   <motion.div
-                    key={stat.label}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={statsInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: index * 0.1 }}
-                    className="text-center"
+                    initial={fadeInUp.initial}
+                    animate={aiInView ? fadeInUp.animate : {}}
+                    className="relative z-10"
                   >
-                    <h3 className="text-3xl md:text-4xl font-bold text-primary mb-2">
-                      {stat.value}
-                    </h3>
-                    <p className="text-muted-foreground">{stat.label}</p>
+                    <h2 className="text-3xl font-bold mb-6">AI-Powered Skin Analysis</h2>
+                    <p className="text-foreground/90 mb-8">
+                      Get personalized skincare recommendations based on advanced AI analysis of your skin's unique characteristics.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <Link href="/analysis">
+                        <Button size="lg" className="group">
+                          <Brain className="mr-2 h-5 w-5" />
+                          Start Analysis
+                        </Button>
+                      </Link>
+                      <Button size="lg" variant="outline">
+                        Learn More
+                      </Button>
+                    </div>
                   </motion.div>
-                ))}
-              </motion.div>
-            </div>
-          </section>
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={aiInView ? { opacity: 1, x: 0 } : {}}
+                    className="relative h-[500px] rounded-2xl overflow-hidden"
+                  >
+                    <Image
+                      src="https://plus.unsplash.com/premium_photo-1683121718643-fb18d2668d53?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                      alt="AI Skin Analysis"
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 mix-blend-overlay" />
+                  </motion.div>
+                </div>
+              </div>
+            </section>
+
+            {/* Reviews Section */}
+            <section
+              ref={reviewsRef}
+              className="py-20 bg-background/95 backdrop-blur-lg relative z-10"
+            >
+              <div className="container mx-auto px-4">
+                <motion.div
+                  initial={fadeInUp.initial}
+                  animate={reviewsInView ? fadeInUp.animate : {}}
+                  transition={fadeInUp.transition}
+                  className="text-center mb-12"
+                >
+                  <h2 className="text-3xl font-bold mb-4">What Our Customers Say</h2>
+                  <p className="text-foreground/90">Real results from real people</p>
+                </motion.div>
+
+                <div className="relative overflow-x-hidden">
+                  <motion.div
+                    className="flex transition-all duration-500 ease-in-out"
+                    animate={{
+                      x: `${-currentIndex * (typeof window !== 'undefined' && window.innerWidth < 640 ? 100 : 33.333)}%`
+                    }}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  >
+                    {reviews.map((review, index) => (
+                      <motion.div
+                        key={review.name}
+                        className="w-full sm:w-1/3 flex-shrink-0 px-2 sm:px-4"
+                        initial={fadeInUp.initial}
+                        animate={reviewsInView ? fadeInUp.animate : {}}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <div className="bg-background/95 backdrop-blur-lg p-4 sm:p-6 rounded-2xl border border-primary/20 h-full shadow-lg">
+                          <div className="flex items-center mb-4">
+                            <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden mr-3 sm:mr-4">
+                              <Image
+                                src={review.image}
+                                alt={review.name}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                            <div>
+                              <h3 className="text-sm sm:text-base font-semibold">{review.name}</h3>
+                              <p className="text-xs sm:text-sm text-foreground/90">{review.role}</p>
+                              <div className="flex">
+                                {Array.from({ length: review.rating }).map((_, i) => (
+                                  <Star key={i} className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-400 fill-yellow-400" />
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          <p className="text-xs sm:text-sm text-foreground/90">{review.review}</p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+
+                  {/* Navigation Dots */}
+                  <div className="flex justify-center mt-6 gap-2">
+                    {[0, 1, 2].map((index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentIndex(index * 3)}
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                          Math.floor(currentIndex / 3) === index 
+                            ? 'bg-primary w-4' 
+                            : 'bg-primary/30 hover:bg-primary/50'
+                        }`}
+                        aria-label={`Go to review group ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Navigation Buttons */}
+                  <button
+                    onClick={() => setCurrentIndex(currentIndex - 3)}
+                    className="hidden sm:block absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 border border-primary/20 
+                             hover:bg-background hover:border-primary/40 transition-all duration-300"
+                    disabled={currentIndex === 0}
+                  >
+                    <ChevronRight className="w-5 h-5 rotate-180" />
+                  </button>
+                  <button
+                    onClick={() => setCurrentIndex(currentIndex + 3)}
+                    className="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 border border-primary/20 
+                             hover:bg-background hover:border-primary/40 transition-all duration-300"
+                    disabled={currentIndex >= 6}
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            {/* Stats Section */}
+            <section
+              ref={statsRef}
+              className="py-20 bg-background/95 backdrop-blur-lg relative z-10"
+            >
+              <div className="container mx-auto px-4">
+                <motion.div
+                  initial={fadeInUp.initial}
+                  animate={statsInView ? fadeInUp.animate : {}}
+                  transition={fadeInUp.transition}
+                  className="grid grid-cols-2 md:grid-cols-4 gap-8"
+                >
+                  {stats.map((stat, index) => (
+                    <motion.div
+                      key={stat.label}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={statsInView ? { opacity: 1, y: 0 } : {}}
+                      transition={{ delay: index * 0.1 }}
+                      className="text-center bg-background/80 backdrop-blur-sm p-6 rounded-2xl border border-primary/20 shadow-lg"
+                    >
+                      <h3 className="text-3xl md:text-4xl font-bold text-primary mb-2">
+                        {stat.value}
+                      </h3>
+                      <p className="text-foreground/90">{stat.label}</p>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </div>
+            </section>
+          </div>
         </div>
       )}
     </ScrollProgressProvider>

@@ -230,7 +230,7 @@ export function Navigation() {
                 height={32}
                 className="w-8 h-8"
               />
-              <span className="text-xl font-bold text-primary">Dermalix</span>
+              <span className="text-xl font-bold text-primary">The Dermalix</span>
             </Link>
 
             {/* Desktop Navigation */}
