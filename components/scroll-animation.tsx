@@ -24,3 +24,8 @@ export function useScrollProgress() {
 
   return progress;
 }
+
+export function ScrollProgressProvider({ children }: { children: (progress: number) => React.ReactNode }) {
+  const progress = useScrollProgress();
+  return <>{children(progress)}</>;
+}
