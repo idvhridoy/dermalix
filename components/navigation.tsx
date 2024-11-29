@@ -178,11 +178,42 @@ const mainNav = [
     name: 'About',
     href: '/about',
     submenu: [
-      { name: 'Our Story', href: '/about/story' },
-      { name: 'Our Mission', href: '/about/mission' },
-      { name: 'Our Team', href: '/about/team' },
-      { name: 'Careers', href: '/about/careers' },
-      { name: 'Press', href: '/about/press' }
+      { 
+        name: 'Our Story',
+        href: '/about/story',
+        submenu: [
+          { name: 'Overview', href: '/about/overview' },
+          { name: 'Mission', href: '/about/mission' },
+          { name: 'Vision', href: '/about/vision' },
+          { name: 'Goals', href: '/about/goals' },
+          { name: 'Achievements', href: '/about/achievements' },
+          { name: 'Roadmap', href: '/about/roadmap' },
+        ]
+      },
+      {
+        name: 'Values',
+        href: '/about/values',
+      },
+      {
+        name: 'Innovation',
+        href: '/about/innovation',
+        submenu: [
+          { name: 'Research & Development', href: '/about/research' },
+          { name: 'Technology', href: '/about/technology' },
+          { name: 'Clinical Studies', href: '/about/studies' },
+        ]
+      },
+      { name: 'Sustainability', href: '/about/sustainability' },
+      {
+        name: 'Company',
+        href: '/about/company',
+        submenu: [
+          { name: 'Team', href: '/about/team' },
+          { name: 'Press', href: '/about/press' },
+          { name: 'Careers', href: '/about/careers' },
+          { name: 'Contact', href: '/about/contact' },
+        ]
+      },
     ]
   },
   { name: 'Contact', href: '/contact' },
@@ -191,7 +222,7 @@ const mainNav = [
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
   const pathname = usePathname();
 
@@ -204,12 +235,32 @@ export function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close menu when route changes
+  // Reset menus on route change
   useEffect(() => {
     setIsOpen(false);
-    setActiveMegaMenu(null);
+    setActiveMenu(null);
     setActiveSubmenu(null);
   }, [pathname]);
+
+  const handleMenuClick = (itemName: string) => {
+    if (activeMenu === itemName) {
+      setActiveMenu(null);
+      setActiveSubmenu(null);
+    } else {
+      setActiveMenu(itemName);
+      setActiveSubmenu(null);
+    }
+  };
+
+  const handleSubmenuClick = (itemName: string, subItemName: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    const menuKey = `${itemName}-${subItemName}`;
+    if (activeSubmenu === menuKey) {
+      setActiveSubmenu(null);
+    } else {
+      setActiveSubmenu(menuKey);
+    }
+  };
 
   const routes: Route[] = [
     { label: 'Home', href: '/' },
@@ -251,8 +302,8 @@ export function Navigation() {
                 <div
                   key={route.label}
                   className="relative"
-                  onMouseEnter={() => route.megaMenu && setActiveMegaMenu(route.megaMenu)}
-                  onMouseLeave={() => setActiveMegaMenu(null)}
+                  onMouseEnter={() => route.megaMenu && setActiveMenu(route.megaMenu)}
+                  onMouseLeave={() => setActiveMenu(null)}
                 >
                   {route.href ? (
                     <Link
@@ -273,7 +324,7 @@ export function Navigation() {
                     <button
                       className={cn(
                         "text-sm font-medium transition-colors hover:text-primary flex items-center gap-1",
-                        activeMegaMenu === route.megaMenu ? "text-primary" : "text-muted-foreground"
+                        activeMenu === route.megaMenu ? "text-primary" : "text-muted-foreground"
                       )}
                     >
                       {route.label}
@@ -285,7 +336,7 @@ export function Navigation() {
                   {route.children && !route.megaMenu && (
                     <div className={cn(
                       "absolute top-full left-0 w-48 bg-background border rounded-md shadow-lg py-2 transition-all duration-200",
-                      activeMegaMenu === route.label ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"
+                      activeMenu === route.label ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"
                     )}>
                       {route.children.map((child) => (
                         <Link
@@ -300,11 +351,11 @@ export function Navigation() {
                   )}
 
                   {/* Mega menu */}
-                  {route.megaMenu && activeMegaMenu === route.megaMenu && (
+                  {route.megaMenu && activeMenu === route.megaMenu && (
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-screen max-w-7xl mx-auto">
                       <MegaMenu 
                         content={megaMenuContent[route.megaMenu]} 
-                        onClose={() => setActiveMegaMenu(null)}
+                        onClose={() => setActiveMenu(null)}
                       />
                     </div>
                   )}
@@ -356,7 +407,7 @@ export function Navigation() {
                           transition={{ duration: 0.2 }}
                         >
                           <button
-                            onClick={() => setActiveSubmenu(activeSubmenu === item.name ? null : item.name)}
+                            onClick={() => handleMenuClick(item.name)}
                             className={`flex items-center justify-between w-full py-2 text-base font-medium transition-colors ${
                               pathname.startsWith(item.href) ? 'text-primary' : 'text-foreground/70'
                             }`}
@@ -364,12 +415,12 @@ export function Navigation() {
                             {item.name}
                             <ChevronDown 
                               className={`w-4 h-4 transition-transform ${
-                                activeSubmenu === item.name ? 'rotate-180' : ''
+                                activeMenu === item.name ? 'rotate-180' : ''
                               }`}
                             />
                           </button>
                           <AnimatePresence>
-                            {activeSubmenu === item.name && (
+                            {activeMenu === item.name && (
                               <motion.div
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
@@ -384,15 +435,66 @@ export function Navigation() {
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ duration: 0.2 }}
                                   >
-                                    <Link
-                                      href={subItem.href}
-                                      className={`flex items-center py-2 text-sm transition-colors ${
-                                        pathname === subItem.href ? 'text-primary' : 'text-foreground/70'
-                                      }`}
-                                    >
-                                      <ChevronRight className="w-4 h-4 mr-2" />
-                                      {subItem.name}
-                                    </Link>
+                                    {subItem.submenu ? (
+                                      <div>
+                                        <button
+                                          onClick={(e) => handleSubmenuClick(item.name, subItem.name, e)}
+                                          className={`flex items-center justify-between w-full py-2 text-sm transition-colors ${
+                                            pathname.startsWith(subItem.href) ? 'text-primary' : 'text-foreground/70'
+                                          }`}
+                                        >
+                                          <span className="flex items-center">
+                                            <ChevronRight className="w-4 h-4 mr-2" />
+                                            {subItem.name}
+                                          </span>
+                                          <ChevronDown 
+                                            className={`w-3 h-3 transition-transform ${
+                                              activeSubmenu === `${item.name}-${subItem.name}` ? 'rotate-180' : ''
+                                            }`}
+                                          />
+                                        </button>
+                                        <AnimatePresence>
+                                          {activeSubmenu === `${item.name}-${subItem.name}` && (
+                                            <motion.div
+                                              initial={{ opacity: 0, height: 0 }}
+                                              animate={{ opacity: 1, height: 'auto' }}
+                                              exit={{ opacity: 0, height: 0 }}
+                                              transition={{ duration: 0.2 }}
+                                              className="pl-6 space-y-1"
+                                            >
+                                              {subItem.submenu.map((subSubItem) => (
+                                                <motion.div
+                                                  key={subSubItem.name}
+                                                  initial={{ opacity: 0, x: -20 }}
+                                                  animate={{ opacity: 1, x: 0 }}
+                                                  transition={{ duration: 0.2 }}
+                                                >
+                                                  <Link
+                                                    href={subSubItem.href}
+                                                    className={`flex items-center py-2 text-sm transition-colors ${
+                                                      pathname === subSubItem.href ? 'text-primary' : 'text-foreground/70'
+                                                    }`}
+                                                  >
+                                                    <ChevronRight className="w-3 h-3 mr-2" />
+                                                    {subSubItem.name}
+                                                  </Link>
+                                                </motion.div>
+                                              ))}
+                                            </motion.div>
+                                          )}
+                                        </AnimatePresence>
+                                      </div>
+                                    ) : (
+                                      <Link
+                                        href={subItem.href}
+                                        className={`flex items-center py-2 text-sm transition-colors ${
+                                          pathname === subItem.href ? 'text-primary' : 'text-foreground/70'
+                                        }`}
+                                      >
+                                        <ChevronRight className="w-4 h-4 mr-2" />
+                                        {subItem.name}
+                                      </Link>
+                                    )}
                                   </motion.div>
                                 ))}
                               </motion.div>
