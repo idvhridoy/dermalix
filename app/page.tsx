@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,6 +9,12 @@ import { Button } from '@/components/ui/button';
 import { ChevronRight, Star, ArrowRight, Brain, Sparkles, Zap, Timer, Sun, Shield, Droplet, BadgeAlert } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { MouseTrailEffect } from '@/components/mouse-trail-effect';
+import dynamic from 'next/dynamic';
+
+const ScrollProgress = dynamic(
+  () => import('@/components/scroll-animation').then(mod => ({ default: mod.useScrollProgress })),
+  { ssr: false }
+);
 
 const categories = [
   { name: 'Cleansers', image: 'https://images.unsplash.com/photo-1556228720-195a672e8a03', href: '/products/cleansers' },
@@ -149,7 +155,7 @@ const heroImages = [
     alt: 'Woman with glowing skin close-up'
   },
   {
-    url: 'https://images.unsplash.com/photo-1576426863848-c21f53c60b19?auto=format&fit=crop&q=80&w=2070',
+    url: 'https://images.unsplash.com/photo-1576426863848-c21f1143ab7be?auto=format&fit=crop&q=80&w=2070',
     alt: 'Woman applying skincare product'
   },
   {
@@ -184,8 +190,7 @@ const fadeInUp = {
 };
 
 export default function HomePage() {
-  const { scrollYProgress } = useScroll();
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const scrollProgress = ScrollProgress();
   const [heroRef, heroInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [categoriesRef, categoriesInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [productsRef, productsInView] = useInView({ triggerOnce: true, threshold: 0.1 });
@@ -197,41 +202,8 @@ export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentAnimation, setCurrentAnimation] = useState(0);
 
-  // Animation variants
-  const slideAnimations = [
-    // Zoom fade
-    {
-      initial: { opacity: 0, scale: 1.1 },
-      animate: { opacity: 1, scale: 1 },
-      exit: { opacity: 0, scale: 0.95 }
-    },
-    // Slide right
-    {
-      initial: { opacity: 0, x: -100 },
-      animate: { opacity: 1, x: 0 },
-      exit: { opacity: 0, x: 100 }
-    },
-    // Slide up
-    {
-      initial: { opacity: 0, y: 50 },
-      animate: { opacity: 1, y: 0 },
-      exit: { opacity: 0, y: -50 }
-    },
-    // Rotate zoom
-    {
-      initial: { opacity: 0, scale: 1.5, rotate: -5 },
-      animate: { opacity: 1, scale: 1, rotate: 0 },
-      exit: { opacity: 0, scale: 0.8, rotate: 5 }
-    },
-    // Fade split
-    {
-      initial: { opacity: 0, scale: 1.1, filter: "blur(10px)" },
-      animate: { opacity: 1, scale: 1, filter: "blur(0px)" },
-      exit: { opacity: 0, scale: 0.95, filter: "blur(10px)" }
-    }
-  ];
+  const opacity = scrollProgress ? 1 - scrollProgress * 2 : 1;
 
-  // Auto-slide functionality
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIndex(prev => {
@@ -255,19 +227,16 @@ export default function HomePage() {
     }
   };
 
-  // Next slide function with animation change
   const nextHeroSlide = () => {
-    setCurrentAnimation((prev) => (prev + 1) % slideAnimations.length);
+    setCurrentAnimation((prev) => (prev + 1) % 5);
     setCurrentSlide((prev) => (prev + 1) % heroImages.length);
   };
 
-  // Previous slide function with animation change
   const prevHeroSlide = () => {
-    setCurrentAnimation((prev) => (prev + 1) % slideAnimations.length);
+    setCurrentAnimation((prev) => (prev + 1) % 5);
     setCurrentSlide((prev) => (prev - 1 + heroImages.length) % heroImages.length);
   };
 
-  // Auto-slide functionality for hero section
   useEffect(() => {
     const interval = setInterval(nextHeroSlide, 5000);
     return () => clearInterval(interval);
@@ -288,9 +257,9 @@ export default function HomePage() {
           <AnimatePresence initial={false} mode="wait">
             <motion.div
               key={currentSlide}
-              initial={slideAnimations[currentAnimation].initial}
-              animate={slideAnimations[currentAnimation].animate}
-              exit={slideAnimations[currentAnimation].exit}
+              initial={{ opacity: 0, scale: 1.1 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
               transition={{ 
                 duration: 0.7,
                 ease: [0.4, 0, 0.2, 1]
