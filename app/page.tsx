@@ -155,7 +155,7 @@ const heroImages = [
     alt: 'Woman with glowing skin close-up'
   },
   {
-    url: 'https://images.unsplash.com/photo-1576426863848-c21f1143ab7be?auto=format&fit=crop&q=80&w=2070',
+    url: 'https://images.unsplash.com/photo-1505944270255-72b8c68c6a70?auto=format&fit=crop&q=80&w=2070',
     alt: 'Woman applying skincare product'
   },
   {
