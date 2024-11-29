@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '../lib/utils';
 import { Button } from './ui/button';
 import { ShoppingCart, Menu, X, ChevronDown, Search, User } from 'lucide-react';
-import { useState, useEffect, useLayoutEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
@@ -211,26 +211,26 @@ export function Navigation() {
     { label: 'Contact', href: '/contact' }
   ];
 
+  const mainNav = [
+    { name: 'Home', href: '/' },
+    { name: 'Shop', href: '/shop' },
+    { name: 'Concerns', href: '/concerns' },
+    { name: 'About', href: '/about' },
+    { name: 'Contact', href: '/contact' },
+  ];
+
   return (
     <>
-      <header 
-        className={cn(
-          "fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-lg transition-all duration-200 z-50",
-          isScrolled && "shadow-md"
-        )}
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled ? 'bg-background/80 backdrop-blur-lg shadow-lg' : 'bg-transparent'
+        }`}
       >
         <nav className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/" className="flex items-center space-x-2">
-              <Image
-                src="/images/logo.svg"
-                alt="Dermalix Logo"
-                width={32}
-                height={32}
-                className="w-8 h-8"
-              />
-              <span className="text-xl font-bold text-primary">The Dermalix</span>
+            <Link href="/" className="text-xl font-bold text-primary">
+              The Dermalix
             </Link>
 
             {/* Desktop Navigation */}
@@ -300,7 +300,7 @@ export function Navigation() {
               ))}
             </div>
 
-            {/* Right side icons */}
+            {/* Desktop Actions */}
             <div className="hidden md:flex items-center space-x-4">
               <Button variant="ghost" size="icon">
                 <Search className="w-5 h-5" />
@@ -313,61 +313,69 @@ export function Navigation() {
               </Button>
             </div>
 
-            {/* Mobile menu button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={() => setIsOpen(!isOpen)}
-            >
-              {isOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
-            </Button>
+            {/* Mobile Menu Button */}
+            <div className="flex md:hidden items-center space-x-4">
+              <Button variant="ghost" size="icon">
+                <ShoppingCart className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)}>
+                {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </Button>
+            </div>
           </div>
-        </nav>
 
-        {/* Mobile Navigation */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t"
-            >
-              <div className="container mx-auto px-4 py-4">
-                {routes.map((route) => (
-                  <div key={route.label}>
-                    {route.href ? (
+          {/* Mobile Navigation */}
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className="md:hidden overflow-hidden bg-background/95 backdrop-blur-lg border-t border-primary/10"
+              >
+                <div className="px-4 py-2 space-y-1">
+                  {mainNav.map((item) => (
+                    <motion.div
+                      key={item.name}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
                       <Link
-                        href={route.href}
-                        className={cn(
-                          "block py-2 text-base font-medium transition-colors hover:text-primary",
-                          pathname === route.href ? "text-primary" : "text-muted-foreground"
-                        )}
-                        onClick={() => setIsOpen(false)}
+                        href={item.href}
+                        className={`block py-2 text-base font-medium transition-colors ${
+                          pathname === item.href ? 'text-primary' : 'text-foreground/70'
+                        }`}
                       >
-                        {route.label}
+                        {item.name}
                       </Link>
-                    ) : (
-                      <button
-                        className="w-full text-left py-2 text-base font-medium text-muted-foreground hover:text-primary"
-                        onClick={() => setActiveMegaMenu(route.megaMenu || null)}
-                      >
-                        {route.label}
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                    </motion.div>
+                  ))}
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.2, delay: 0.1 }}
+                    className="pt-2 pb-3 border-t border-primary/10"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <Button variant="ghost" size="sm" className="flex-1">
+                        <Search className="h-4 w-4 mr-2" />
+                        Search
+                      </Button>
+                      <Button variant="ghost" size="sm" className="flex-1">
+                        <User className="h-4 w-4 mr-2" />
+                        Account
+                      </Button>
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </nav>
       </header>
-      
+
       {/* Spacer for fixed header */}
       <div className="h-16" />
     </>

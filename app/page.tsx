@@ -325,46 +325,47 @@ export default function HomePage() {
             {/* Shop by Concern Section */}
             <section
               ref={concernsRef}
-              className="py-20 bg-background/95 backdrop-blur-lg relative z-10"
+              className="py-20 bg-card relative z-10"
             >
               <div className="container mx-auto px-4">
                 <motion.div
                   initial={fadeInUp.initial}
                   animate={concernsInView ? fadeInUp.animate : {}}
+                  transition={fadeInUp.transition}
                   className="text-center mb-12"
                 >
                   <h2 className="text-3xl font-bold mb-4">Shop by Concern</h2>
-                  <p className="text-foreground/90">Find the perfect solution for your skin concerns</p>
+                  <p className="text-foreground/70">Target your specific skincare needs</p>
                 </motion.div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 sm:gap-6">
                   {concerns.map((concern, index) => (
                     <motion.div
                       key={concern.name}
                       initial={{ opacity: 0, y: 20 }}
                       animate={concernsInView ? { opacity: 1, y: 0 } : {}}
                       transition={{ delay: index * 0.1 }}
-                      className="group relative p-6 sm:p-8 rounded-2xl border border-primary/10 hover:border-primary/50 transition-all duration-300 overflow-hidden min-h-[320px] sm:min-h-[360px] bg-background/80 backdrop-blur-sm hover:shadow-[0_0_30px_rgba(var(--primary-rgb),0.3)] hover:bg-background/90"
+                      className="group relative p-4 sm:p-6 rounded-2xl border border-primary/10 hover:border-primary/30 transition-colors overflow-hidden"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <div className="relative z-10">
-                        <div className="relative w-full h-32 sm:h-40 mb-6 rounded-xl overflow-hidden">
-                          <Image
-                            src={concern.image}
-                            alt={concern.name}
-                            fill
-                            className="object-cover transition-transform duration-300 group-hover:scale-105"
-                          />
-                        </div>
-                        <h3 className="text-lg sm:text-xl font-semibold mb-3 group-hover:text-primary transition-colors duration-300">{concern.name}</h3>
-                        <p className="text-foreground/80 text-sm sm:text-base mb-4">{concern.description}</p>
-                        <Button
-                          variant="ghost"
-                          className="w-full group-hover:bg-primary/10 transition-colors duration-300"
-                        >
-                          Explore Solutions
-                        </Button>
+                      <div className="relative w-full h-24 sm:h-32 mb-4 rounded-lg overflow-hidden">
+                        <Image
+                          src={concern.image}
+                          alt={concern.name}
+                          fill
+                          className="object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
                       </div>
+                      <h3 className="text-base sm:text-lg font-medium mb-2 text-center">
+                        {concern.name}
+                      </h3>
+                      <Link href={`/concerns/${concern.slug}`}>
+                        <Button 
+                          variant="ghost"
+                          className="w-full group-hover:text-primary text-xs sm:text-sm"
+                        >
+                          Learn More
+                        </Button>
+                      </Link>
                     </motion.div>
                   ))}
                 </div>
@@ -374,7 +375,7 @@ export default function HomePage() {
             {/* Categories Section */}
             <section
               ref={categoriesRef}
-              className="py-20 bg-background/50 backdrop-blur-sm"
+              className="py-20 bg-card relative z-10"
             >
               <div className="container mx-auto px-4">
                 <motion.div
@@ -384,7 +385,7 @@ export default function HomePage() {
                   className="text-center mb-12"
                 >
                   <h2 className="text-3xl font-bold mb-4">Shop By Category</h2>
-                  <p className="text-foreground/70">Find the perfect products for your skincare routine</p>
+                  <p className="text-foreground/90">Find the perfect products for your skincare routine</p>
                 </motion.div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -403,11 +404,11 @@ export default function HomePage() {
                           fill
                           className="object-cover"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent" />
                         <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6">
                           <h3 className="text-xl sm:text-2xl font-semibold">{category.name}</h3>
                           <Link href={category.href}>
-                            <Button variant="ghost" className="text-white group-hover:translate-x-2 transition-transform text-sm sm:text-base">
+                            <Button variant="ghost" className="text-card-foreground group-hover:translate-x-2 transition-transform text-sm sm:text-base">
                               Shop Now <ArrowRight className="ml-2 h-3 w-3 sm:h-4 sm:w-4" />
                             </Button>
                           </Link>
@@ -432,7 +433,7 @@ export default function HomePage() {
                   className="text-center mb-12"
                 >
                   <h2 className="text-3xl font-bold mb-4">Best Sellers</h2>
-                  <p className="text-foreground/70">Our most loved products</p>
+                  <p className="text-foreground/90">Our most loved products</p>
                 </motion.div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -442,7 +443,7 @@ export default function HomePage() {
                       initial={fadeInUp.initial}
                       animate={productsInView ? fadeInUp.animate : {}}
                       transition={{ delay: index * 0.1 }}
-                      className="group bg-background/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-primary/10"
+                      className="group bg-card text-card-foreground p-6 rounded-2xl border border-primary/20 shadow-lg hover:shadow-primary/20 transition-shadow duration-300"
                     >
                       <div className="relative h-64">
                         <Image
@@ -452,19 +453,17 @@ export default function HomePage() {
                           className="object-cover"
                         />
                       </div>
-                      <div className="p-6">
-                        <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
-                        <p className="text-foreground/70 mb-4">{product.description}</p>
-                        <div className="flex items-center justify-between mb-4">
-                          <span className="text-xl font-bold">{product.price}</span>
-                          <div className="flex items-center">
-                            <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                            <span className="ml-1 text-sm">{product.rating}</span>
-                            <span className="ml-1 text-sm text-foreground/70">({product.reviews})</span>
-                          </div>
+                      <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
+                      <p className="text-foreground/90 mb-4">{product.description}</p>
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-xl font-bold">{product.price}</span>
+                        <div className="flex items-center">
+                          <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+                          <span className="ml-1 text-sm">{product.rating}</span>
+                          <span className="ml-1 text-sm text-foreground/90">({product.reviews})</span>
                         </div>
-                        <Button className="w-full">Add to Cart</Button>
                       </div>
+                      <Button className="w-full">Add to Cart</Button>
                     </motion.div>
                   ))}
                 </div>
@@ -474,7 +473,7 @@ export default function HomePage() {
             {/* AI Skin Analysis Section */}
             <section
               ref={aiRef}
-              className="py-20 bg-background/95 backdrop-blur-lg relative z-10"
+              className="py-20 bg-card relative z-10"
             >
               <div className="container mx-auto px-4">
                 <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -519,7 +518,7 @@ export default function HomePage() {
             {/* Reviews Section */}
             <section
               ref={reviewsRef}
-              className="py-20 bg-background/95 backdrop-blur-lg relative z-10"
+              className="py-20 bg-card relative z-10"
             >
               <div className="container mx-auto px-4">
                 <motion.div
@@ -548,7 +547,7 @@ export default function HomePage() {
                         animate={reviewsInView ? fadeInUp.animate : {}}
                         transition={{ delay: index * 0.1 }}
                       >
-                        <div className="bg-background/95 backdrop-blur-lg p-4 sm:p-6 rounded-2xl border border-primary/20 h-full shadow-lg">
+                        <div className="bg-card text-card-foreground p-4 sm:p-6 rounded-2xl border border-primary/20 h-full shadow-lg">
                           <div className="flex items-center mb-4">
                             <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden mr-3 sm:mr-4">
                               <Image
@@ -568,7 +567,7 @@ export default function HomePage() {
                               </div>
                             </div>
                           </div>
-                          <p className="text-xs sm:text-sm text-foreground/90">{review.review}</p>
+                          <p className="text-foreground/90">{review.review}</p>
                         </div>
                       </motion.div>
                     ))}
@@ -593,16 +592,16 @@ export default function HomePage() {
                   {/* Navigation Buttons */}
                   <button
                     onClick={() => setCurrentIndex(currentIndex - 3)}
-                    className="hidden sm:block absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 border border-primary/20 
-                             hover:bg-background hover:border-primary/40 transition-all duration-300"
+                    className="hidden sm:block absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-card border border-primary/20 
+                             hover:bg-card hover:border-primary/40 transition-all duration-300"
                     disabled={currentIndex === 0}
                   >
                     <ChevronRight className="w-5 h-5 rotate-180" />
                   </button>
                   <button
                     onClick={() => setCurrentIndex(currentIndex + 3)}
-                    className="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 border border-primary/20 
-                             hover:bg-background hover:border-primary/40 transition-all duration-300"
+                    className="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-card border border-primary/20 
+                             hover:bg-card hover:border-primary/40 transition-all duration-300"
                     disabled={currentIndex >= 6}
                   >
                     <ChevronRight className="w-5 h-5" />
@@ -614,7 +613,7 @@ export default function HomePage() {
             {/* Stats Section */}
             <section
               ref={statsRef}
-              className="py-20 bg-background/95 backdrop-blur-lg relative z-10"
+              className="py-20 bg-card relative z-10"
             >
               <div className="container mx-auto px-4">
                 <motion.div
@@ -629,7 +628,7 @@ export default function HomePage() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={statsInView ? { opacity: 1, y: 0 } : {}}
                       transition={{ delay: index * 0.1 }}
-                      className="text-center bg-background/80 backdrop-blur-sm p-6 rounded-2xl border border-primary/20 shadow-lg"
+                      className="text-center bg-card text-card-foreground p-6 rounded-2xl border border-primary/20 shadow-lg"
                     >
                       <h3 className="text-3xl md:text-4xl font-bold text-primary mb-2">
                         {stat.value}
