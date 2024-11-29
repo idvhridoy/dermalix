@@ -30,6 +30,9 @@ export function MouseTrailEffect() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
+    // Check if we're in the browser
+    if (typeof window === 'undefined') return;
+
     let particleCount = 0;
     const maxParticles = 15;
 
